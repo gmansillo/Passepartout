@@ -1,4 +1,5 @@
 <?php
+
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Layout\LayoutHelper;
@@ -28,16 +29,24 @@ $isNew = !isset($item->id) || $item->id <= 0;
             <div class="col-md-9">
                 <div class="form-vertical">
 
-                    <?php if ($isNew): ?>
+                    <div class="row">
 
-                        <?php echo $form->renderField('file_upload'); ?>
+                        <?php if ($item->file_size > 0): ?>
 
-                    <?php else: ?>
-                        
-                        <?php echo $form->renderField('file_name'); ?>
-                        <?php echo $form->renderField('file_replace'); ?>
+                            <div class="col-md-3">
+                                <?php echo $form->renderField('file_size'); ?>
+                                <?php echo $form->renderField('file_path'); ?>
+                                <?php echo $form->renderField('file_name'); ?>
+                            </div>
 
-                    <?php endif; ?>
+                        <?php endif; ?>
+
+                        <div class="col-md-<?php echo $isNew ? 12 : 9 ?>">
+
+                            <?php echo $form->renderField('file_upload'); ?>
+
+                        </div>
+                    </div>
 
                     <?php echo $form->renderField('description'); ?>
 

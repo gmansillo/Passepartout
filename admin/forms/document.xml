@@ -27,13 +27,7 @@
         name="file_upload"
         type="file"
         label="COM_DORY_DOCUMENT_FILE_UPLOAD"
-        validate="fileupload"
-    />
-
-    <field
-        name="file_replace"
-        type="file"
-        label="COM_DORY_DOCUMENT_FILE_REPLACE"
+        validate="extensionblacklist"
     />
 
     <field
