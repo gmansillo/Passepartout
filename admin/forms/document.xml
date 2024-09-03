@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+    <field
+        name="id"
+        type="text"
+        label="JGLOBAL_FIELD_ID_LABEL"
+        readonly="true"
+    />
+
+    <field
+        name="title"
+        type="text"
+        label="JGLOBAL_TITLE"
+        required="true"
+    />
+
+    <field
+        name="alias"
+        type="text"
+        label="JFIELD_ALIAS_LABEL"
+        description="JFIELD_ALIAS_DESC"
+        hint="JFIELD_ALIAS_PLACEHOLDER"
+    />
+
+    <field
+        addruleprefix="GiovanniMansillo\Component\Dory\Administrator\Rule"
+        name="file_upload"
+        type="file"
+        label="COM_DORY_DOCUMENT_FILE_UPLOAD"
+        validate="fileupload"
+    />
+
+    <field
+        name="file_replace"
+        type="file"
+        label="COM_DORY_DOCUMENT_FILE_REPLACE"
+    />
+
+    <field
+        name="file_path"
+        type="text"
+        readonly="true"
+        dlabel="COM_DORY_DOCUMENT_FILE_PATH"
+    />
+
+    <field
+        name="file_md5"
+        type="text"
+        readonly="true"
+        label="COM_DORY_DOCUMENT_FILE_MD5"
+    />
+
+    <field
+        name="file_size"
+        type="text"
+        readonly="true"
+        label="COM_DORY_DOCUMENT_FILE_SIZE"
+    />
+
+    <field
+        name="file_name"
+        type="text"
+        readonly="true"
+        label="COM_DORY_DOCUMENT_FILE_NAME"
+    />
+
+    <field
+        name="description"
+        type="editor"
+        label="JGLOBAL_DESCRIPTION"
+        required="false"
+    />
+
+    <fieldset name="sideparams">
+        <field
+            name="state"
+            type="list"
+            label="JSTATUS"
+            default="1"
+            class="form-select-color-state"
+            validate="options"
+        >
+            <option value="1">JPUBLISHED</option>
+            <option value="0">JUNPUBLISHED</option>
+            <option value="2">JARCHIVED</option>
+            <option value="-2">JTRASHED</option>
+        </field>
+        <field
+            name="category"
+            type="category"
+            default=""
+            extension="com_dory"
+            label="JCATEGORY"
+            required="true"
+        />
+
+
+        <field
+            name="access"
+            type="list"
+            label="COM_DORY_ACCESS"
+            default="0"
+            filter="integer"
+            validate="options"
+        >
+            <option value="0">COM_DORY_ACCESS_OPTION_PUBLIC</option>
+            <option value="1">COM_DORY_ACCESS_OPTION_USERS</option>
+            <option value="2">COM_DORY_ACCESS_OPTION_USERGROUPS</option>
+        </field>
+
+        <field
+            name="access_usergroups"
+            type="UserGroupList"
+            layout="joomla.form.field.list-fancy-select"
+            checksuperusergroup="1"
+            default=""
+            multiple="1"
+            showon="access:2"
+            label="COM_DORY_ACCESS_USERGROUPS"
+        />
+        <field
+            name="access_users"
+            type="user"
+            label="COM_DORY_ACCESS_USERS"
+            showon="access:1"
+        />
+
+    </fieldset>
+
+    <field
+        name="created"
+        type="calendar"
+        label="JGLOBAL_FIELD_CREATED_LABEL"
+    />
+    <field
+        name="created_by"
+        type="user"
+        label="JGLOBAL_FIELD_CREATED_BY_LABEL"
+    />
+    <field
+        name="modified"
+        type="calendar"
+        label="JGLOBAL_FIELD_MODIFIED_LABEL"
+    />
+    <field
+        name="modified_by"
+        type="user"
+        label="JGLOBAL_FIELD_MODIFIED_BY_LABEL"
+    />
+</form>
