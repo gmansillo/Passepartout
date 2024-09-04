@@ -31,52 +31,53 @@ $isNew = !isset($item->id) || $item->id <= 0;
 
                     <div class="row">
 
-                        <?php if ($item->file_size > 0): ?>
+                        <?php if ($item->file_name): ?>
 
                             <div class="col-md-3">
-                                <?php echo $form->renderField('file_size'); ?>
-                                <?php echo $form->renderField('file_path'); ?>
                                 <?php echo $form->renderField('file_name'); ?>
                             </div>
+                            <div class="col-md-9">
+
+                        <?php else: ?>
+
+                            <div class="col-md-12">
 
                         <?php endif; ?>
 
-                        <div class="col-md-<?php echo $isNew ? 12 : 9 ?>">
+                                <?php echo $form->renderField('file_upload'); ?>
 
-                            <?php echo $form->renderField('file_upload'); ?>
-
+                            </div>
                         </div>
+
+                        <?php echo $form->renderField('description'); ?>
+
                     </div>
+                </div>
 
-                    <?php echo $form->renderField('description'); ?>
-
+                <div class="col-md-3">
+                    <div class="form-vertical">
+                        <?php echo $form->renderFieldset('sideparams'); ?>
+                    </div>
                 </div>
             </div>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-            <div class="col-md-3">
-                <div class="form-vertical">
-                    <?php echo $form->renderFieldset('sideparams'); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'publishing', Text::_('JGLOBAL_FIELDSET_PUBLISHING')); ?>
+            <div class="row">
+                <div class="col-md-12">
+                    <fieldset id="fieldset-publishingdata" class="options-form">
+                        <legend><?php echo Text::_('JGLOBAL_FIELDSET_PUBLISHING'); ?></legend>
+                        <div>
+                            <?php echo LayoutHelper::render('joomla.edit.publishingdata', $this); ?>
+                        </div>
+                    </fieldset>
                 </div>
             </div>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+
+            <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
         </div>
-        <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-        <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'publishing', Text::_('JGLOBAL_FIELDSET_PUBLISHING')); ?>
-        <div class="row">
-            <div class="col-md-12">
-                <fieldset id="fieldset-publishingdata" class="options-form">
-                    <legend><?php echo Text::_('JGLOBAL_FIELDSET_PUBLISHING'); ?></legend>
-                    <div>
-                        <?php echo LayoutHelper::render('joomla.edit.publishingdata', $this); ?>
-                    </div>
-                </fieldset>
-            </div>
-        </div>
-        <?php echo HTMLHelper::_('uitab.endTab'); ?>
-
-        <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
-    </div>
-
-    <input type="hidden" name="task" value="">
-    <?php echo HTMLHelper::_('form.token'); ?>
+        <input type="hidden" name="task" value="">
+        <?php echo HTMLHelper::_('form.token'); ?>
 </form>

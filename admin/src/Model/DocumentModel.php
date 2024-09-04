@@ -124,21 +124,29 @@ class DocumentModel extends AdminModel
                 //             $data["file_upload"] = "assfd";
 
                 if ($files['file_upload']) {
+
                         $file = $files['file_upload'];
-                        die(var_dump($file));
+
+                        if ($file['error']) {
+                                // TODO: stop uploading and show error message
+                                $app->enqueueMessage("", 'warning');
+                        }
+
+                        // Delete previous file
+                        if ($data['file_path'])
+                                if (!File::delete($data["file_path"])); // TODO: stop uploading and show error message
+
+                        // File upload
+                        $dest = JPATH_ADMINISTRATOR . '/components/com_dory/uploads/' . uniqid(random_int(1000, 9999), true);
+                        if (!File::upload($files["select_file"]["tmp_name"], $dest)); // TODO: stop saving and show error message
 
                         $data["file_name"] = $file['name'];
-                        // $data["file_md5"] = md5_file($file[]);
-                        // $data["file_size"] = $file['size'];
-                        // $data["file_path"] = $file['path'];
+                        $data["file_md5"] = md5_file($dest);
+                        $data["file_size"] = $file['size'];
+                        $data["file_path"] = $dest;
                 }
 
-
-                //             // TODO: Implement file extension check
-                // // 			// File upload
-                // // 			$file_name         = $files["select_file"]["name"];
                 // // 			$dest              = JPATH_COMPONENT_ADMINISTRATOR . "/uploads/" . uniqid("", true) . "/" . JFile::makeSafe(JFile::getName($file_name));
-                // // 			$data["file_name"] = JFile::upload($files["select_file"]["tmp_name"], $dest) ? $dest : false;
 
                 //             // 			if (!$data["file_name"])
                 // // 			{
@@ -150,11 +158,6 @@ class DocumentModel extends AdminModel
 
                 //             // 			$data["file_size"] = $files["select_file"]["size"];
                 // // 			$data["md5hash"]   = md5_file($data["file_name"]);
-
-
-
-
-
                 //             // 	/**
                 // // 	 * Prepare data before executing controller save function
                 // // 	 *
@@ -170,13 +173,6 @@ class DocumentModel extends AdminModel
                 // // 		$canManage    = $user->authorise('core.manage', 'com_firedrive');
                 // // 		$canEditState = $user->authorise('core.edit.state', 'com_firedrive');
                 // // 		$isNew        = empty($data["id"]);
-
-
-
-
-
-
-
                 //             // 		$data["state"]      = $params->get('default_state', 0);
                 // // 		$data["visibility"] = $params->get('default_visibility', 5);
                 // // 		$data["created"]    = JFactory::getDate()->toSql();
@@ -290,22 +286,7 @@ class DocumentModel extends AdminModel
                 // // 	}
 
                 //             // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 //         }
-                //         //  = $isNew ? $data['file_upload'] : ($data['file_replace'] != '' ? $data['file_replace'] : $data['file']);
 
                 // Set created by
                 $user = Factory::getApplication()->getIdentity();
