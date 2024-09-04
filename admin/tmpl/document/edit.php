@@ -28,56 +28,84 @@ $isNew = !isset($item->id) || $item->id <= 0;
         <div class="row">
             <div class="col-md-9">
                 <div class="form-vertical">
+                    <?php echo $form->renderField('description'); ?>
+                </div>
+            </div>
 
-                    <div class="row">
+            <div class="col-md-3">
+                <div class="form-vertical">
 
-                        <?php if ($item->file_name): ?>
+                    <?php if ($item->file_name): ?>
 
-                            <div class="col-md-3">
-                                <?php echo $form->renderField('file_name'); ?>
+                        <!-- <?php echo $form->renderField('file_name'); ?> -->
+
+                        <div class="control-group">
+                            <div class="control-label">
+                                <label id="jform_file-lbl" for="jform_file"><?= Text::_('COM_DORY_DOCUMENT_FILE_NAME'); ?></label>
                             </div>
-                            <div class="col-md-9">
+                            <div class="controls">
 
-                        <?php else: ?>
+                                <field
+                                    name="file_path"
+                                    type="text"
+                                    readonly="true"
+                                    dlabel="COM_DORY_DOCUMENT_FILE_PATH" />
 
-                            <div class="col-md-12">
+                                <div class="row">
+                                    <!-- <div class="col-3">
+                                        <img src="" />
+                                    </div> -->
+                                    <div class="col">
 
-                        <?php endif; ?>
+                                        <h5><a href="<?= $item->file_path; ?>" target="_blank"><?= $item->file_name; ?></a> (<?= $item->file_size; ?>byte)</h5>
+                                        <!-- <div class="btn btn-outline-secondary" type="button" id="button-addon2"><i class="icon icon-info"></i></div> -->
 
-                                <?php echo $form->renderField('file_upload'); ?>
+                                        <small><?= Text::_('COM_DORY_DOCUMENT_FILE_MD5') ?>: <strong><?= $item->file_md5; ?></strong></small>
+
+                                    </div>
+                                </div>
 
                             </div>
                         </div>
 
-                        <?php echo $form->renderField('description'); ?>
+                        <!-- 
+                        <?php echo $form->renderField('file_size'); ?>
+                        <?php echo $form->renderField('file_md5'); ?>
+                        <?php echo $form->renderField('file_path'); ?> -->
 
-                    </div>
-                </div>
+                        <?php /* TODO: show formatted document with icon and file data */ ?>
 
-                <div class="col-md-3">
-                    <div class="form-vertical">
-                        <?php echo $form->renderFieldset('sideparams'); ?>
-                    </div>
-                </div>
-            </div>
-            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                        <?php echo $form->renderField('file_replace'); ?>
 
-            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'publishing', Text::_('JGLOBAL_FIELDSET_PUBLISHING')); ?>
-            <div class="row">
-                <div class="col-md-12">
-                    <fieldset id="fieldset-publishingdata" class="options-form">
-                        <legend><?php echo Text::_('JGLOBAL_FIELDSET_PUBLISHING'); ?></legend>
-                        <div>
-                            <?php echo LayoutHelper::render('joomla.edit.publishingdata', $this); ?>
-                        </div>
-                    </fieldset>
+                    <?php else: ?>
+
+                        <?php echo $form->renderField('file_upload'); ?>
+
+                    <?php endif; ?>
+
+                    <?php echo $form->renderFieldset('sideparams'); ?>
+
                 </div>
             </div>
-            <?php echo HTMLHelper::_('uitab.endTab'); ?>
-
-            <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
         </div>
+        <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-        <input type="hidden" name="task" value="">
-        <?php echo HTMLHelper::_('form.token'); ?>
+        <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'publishing', Text::_('JGLOBAL_FIELDSET_PUBLISHING')); ?>
+        <div class="row">
+            <div class="col-md-12">
+                <fieldset id="fieldset-publishingdata" class="options-form">
+                    <legend><?php echo Text::_('JGLOBAL_FIELDSET_PUBLISHING'); ?></legend>
+                    <div>
+                        <?php echo LayoutHelper::render('joomla.edit.publishingdata', $this); ?>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        <?php echo HTMLHelper::_('uitab.endTab'); ?>
+
+        <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
+    </div>
+
+    <input type="hidden" name="task" value="">
+    <?php echo HTMLHelper::_('form.token'); ?>
 </form>

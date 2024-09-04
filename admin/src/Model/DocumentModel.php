@@ -23,13 +23,6 @@ class DocumentModel extends AdminModel
                         return false;
                 }
 
-                // // Set validations conditionally
-                // if (isset($data['id']) && $data['id'] > 0) {
-                //     $form->setFieldAttribute('file_upload', 'required', 'false');
-                // }
-
-                // $form->setFieldAttribute('file_upload', 'label', 'COM_DORY_DOCUMENT_FILE_REPLACE');
-
                 return $form;
         }
 
@@ -56,237 +49,43 @@ class DocumentModel extends AdminModel
          */
         public function save($data)
         {
-                //         die(var_dump($data['file_upload']));
-                //         //TODO: Add validation on extension (maybe not here but in form field)
-
-                //         $isNew = !isset($data['id']) || $data['id'] <= 0;
-
                 $app = Factory::getApplication();
                 $input = $app->getInput();
                 $table = Table::getInstance('DocumentTable');
                 $files = $input->files->get('jform');
 
-                //         // // Alter the name for save as copy
-                //         // if ($input->get('task') == 'save2copy') {
-                //         //     /** @var \GiovanniMansillo\Component\Dory\Administrator\Table\DocumentTable $origTable */
-                //         //     $origTable = clone $this->getTable();
-                //         //     $origTable->load($input->getInt('id'));
+                // TODO: Check max_upload_filesize and warn user
 
-                //         //     if ($data['name'] == $origTable->name) {
-                //         //         list($name, $alias) = $this->generateNewTitle($data['catid'], $data['alias'], $data['name']);
-                //         //         $data['name'] = $name;
-                //         //         $data['alias'] = $alias;
-                //         //     } else {
-                //         //         if ($data['alias'] == $origTable->alias) {
-                //         //             $data['alias'] = '';
-                //         //         }
-                //         //     }
+                // File
+                $file = $files['file_upload'] ?? $files['file_replace'];
+                if (isset($file['size']) && $file['size'] > 0) {
 
-                //         //     $data['state'] = 0;
-                //         // }
-
-                //         // if ($input->get('task') == 'save2copy' || $input->get('task') == 'copy') {
-                //         //     $data['hits'] = 0;
-                //         // }
-
-                //         // // Alias
-                //         // if ($table->load(array('alias' => $data['alias'], 'catid' => $data['category']))) {
-                //         //     $msg = JText::_('COM_CONTENT_SAVE_WARNING');
-                //         // }
-
-                //         // list($title, $alias) = $this->generateNewTitle($data['category'], $data['alias'], $data['title']);
-                //         // $data['alias'] = $alias;
-
-                //         // if (isset($msg)) {
-                //         //     Factory::getApplication()->enqueueMessage($msg, 'warning');
-                //         // }
-
-                //         // File
-                //         $file = $files['file_upload'] ?? $files['file_replace'];
-                //         die($file);
-
-                //         if ($file['name']) {
-
-                //             if (!$isNew) {
-                //                 File::delete($data["file_path"]); // Delete the previous file
-                //             }
-
-                //             $src = $file["tmp_name"];
-                //             $dest = JPATH_COMPONENT_ADMINISTRATOR . DIRECTORY_SEPARATOR . $file['name'];
-
-                //             $result = File::upload($src, $dest);
-
-                //             // TODO: Define translatable error message
-                //             if (!$result) {
-                //                 $app->enqueueMessage("", 'warning');
-                //             }
-
-                //             $data["file_upload"] = "assfd";
-
-                if ($files['file_upload']) {
-
-                        $file = $files['file_upload'];
-
-                        if ($file['error']) {
+                        if (isset($file['error']) && !empty($file['error'])) {
                                 // TODO: stop uploading and show error message
-                                $app->enqueueMessage("", 'warning');
+                                die($file['error']);
+                                return false;
+                        }
+
+                        // Ensure that a malicious user hasn't tried to trick the script into working on files upon which it should not be working--for instance, /etc/passwd.
+                        if (!file_exists($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
+                                // TODO: show error
+                                die("Error in file upload");
+                                return false;
                         }
 
                         // Delete previous file
                         if ($data['file_path'])
-                                if (!File::delete($data["file_path"])); // TODO: stop uploading and show error message
+                                if (!File::delete($data["file_path"])); // TODO:  show warning message
 
                         // File upload
                         $dest = JPATH_ADMINISTRATOR . '/components/com_dory/uploads/' . uniqid(random_int(1000, 9999), true);
-                        if (!File::upload($files["select_file"]["tmp_name"], $dest)); // TODO: stop saving and show error message
+                        if (!File::upload($file["tmp_name"], $dest)); // TODO: stop saving and show error message
 
-                        $data["file_name"] = $file['name'];
+                        $data["file_name"] = File::makeSafe($file['name']);
                         $data["file_md5"] = md5_file($dest);
                         $data["file_size"] = $file['size'];
                         $data["file_path"] = $dest;
                 }
-
-                // // 			$dest              = JPATH_COMPONENT_ADMINISTRATOR . "/uploads/" . uniqid("", true) . "/" . JFile::makeSafe(JFile::getName($file_name));
-
-                //             // 			if (!$data["file_name"])
-                // // 			{
-                // // 				JFactory::getApplication()->enqueueMessage(JText::_('COM_FIREDRIVE_FILE_UPLOAD_ERROR_MESSAGE'), 'error');
-                // // 				parent::save($key, $urlVar);
-
-                //             // 				return;
-                // // 			}
-
-                //             // 			$data["file_size"] = $files["select_file"]["size"];
-                // // 			$data["md5hash"]   = md5_file($data["file_name"]);
-                //             // 	/**
-                // // 	 * Prepare data before executing controller save function
-                // // 	 *
-                // // 	 * @param mixed   $data  Form data (passed by reference)
-                // // 	 * @param unknown $files File to upload
-                // // 	 *
-                // // 	 * @since   5.2.1
-                // // 	 */
-                // // 	protected function prepareDataBeforeSave(&$data, $files)
-                // // 	{
-                // // 		$params       = JComponentHelper::getParams('com_firedrive');
-                // // 		$user         = JFactory::getUser();
-                // // 		$canManage    = $user->authorise('core.manage', 'com_firedrive');
-                // // 		$canEditState = $user->authorise('core.edit.state', 'com_firedrive');
-                // // 		$isNew        = empty($data["id"]);
-                //             // 		$data["state"]      = $params->get('default_state', 0);
-                // // 		$data["visibility"] = $params->get('default_visibility', 5);
-                // // 		$data["created"]    = JFactory::getDate()->toSql();
-                // // 		$data["created_by"] = $user->id;
-                // // 		$data["language"]   = "*";
-
-                //             // 		// Send notify email
-                // // 		// TODO: Advice administrators via email notification
-
-                //             // 		return;
-                // // 	}
-
-                //             // 	function cancel()
-                // // 	{
-
-                //             // 		$app = JFactory::getApplication();
-
-                //             // 		// Get the current edit id.
-                // // 		$editId = (int) $app->getUserState('com_firedrive.edit.document.id');
-
-                //             // 		// Get the model.
-                // // 		$model = $this->getModel('DocumentForm', 'FiredriveModel');
-
-                //             // 		// Check in the item
-                // // 		if ($editId)
-                // // 		{
-                // // 			$model->checkin($editId);
-                // // 		}
-
-                //             // 		$menu = JFactory::getApplication()->getMenu();
-                // // 		$item = $menu->getActive();
-                // // 		$url  = (empty($item->link) ? 'index.php?option=com_firedrive' : $item->link);
-                // // 		$this->setRedirect(JRoute::_($url, false));
-                // // 	}
-
-                //             // 	public function remove()
-                // // 	{
-                // // 		// Initialise variables.
-                // // 		$app   = JFactory::getApplication();
-                // // 		$model = $this->getModel('DocumentForm', 'FiredriveModel');
-
-                //             // 		// Get the user data.
-                // // 		$data       = array();
-                // // 		$data["id"] = $app->input->getInt('id');
-
-                //             // 		// Check for errors.
-                // // 		if (empty($data["id"]))
-                // // 		{
-                // // 			// Get the validation messages.
-                // // 			$errors = $model->getErrors();
-
-                //             // 			// Push up to three validation messages out to the user.
-                // // 			for ($i = 0, $n = count($errors); $i < $n && $i < 3; $i++)
-                // // 			{
-                // // 				if ($errors[$i] instanceof Exception)
-                // // 				{
-                // // 					$app->enqueueMessage($errors[$i]->getMessage(), 'warning');
-                // // 				}
-                // // 				else
-                // // 				{
-                // // 					$app->enqueueMessage($errors[$i], 'warning');
-                // // 				}
-                // // 			}
-
-                //             // 			// Save the data in the session.
-                // // 			$app->setUserState('com_firedrive.edit.document.data', $data);
-
-                //             // 			// Redirect back to the edit screen.
-                // // 			$id = (int) $app->getUserState('com_firedrive.edit.document.id');
-                // // 			$this->setRedirect(JRoute::_('index.php?option=com_firedrive&view=firedrive&layout=edit&id=' . $id, false));
-
-                //             // 			return false;
-                // // 		}
-
-                //             // 		// Attempt to save the data.
-                // // 		$return = $model->delete($data);
-
-                //             // 		// Check for errors.
-                // // 		if ($return === false)
-                // // 		{
-                // // 			// Save the data in the session.
-                // // 			$app->setUserState('com_firedrive.edit.document.data', $data);
-
-                //             // 			// Redirect back to the edit screen.
-                // // 			$id = (int) $app->getUserState('com_firedrive.edit.document.id');
-                // // 			$this->setMessage(JText::sprintf('Delete failed', $model->getError()), 'warning');
-                // // 			$this->setRedirect(JRoute::_('index.php?option=com_firedrive&view=firedrive&layout=edit&id=' . $id, false));
-
-                //             // 			return false;
-                // // 		}
-
-
-                //             // 		// Check in the profile.
-                // // 		if ($return)
-                // // 		{
-                // // 			$model->checkin($return);
-                // // 		}
-
-                //             // 		// Clear the profile id from the session.
-                // // 		$app->setUserState('com_firedrive.edit.document.id', null);
-
-                //             // 		// Redirect to the list screen.
-                // // 		$this->setMessage(JText::_('COM_FIREDRIVE_ITEM_DELETED_SUCCESSFULLY'));
-                // // 		$menu = JFactory::getApplication()->getMenu();
-                // // 		$item = $menu->getActive();
-                // // 		$url  = (empty($item->link) ? 'index.php?option=com_firedrive' : $item->link);
-                // // 		$this->setRedirect(JRoute::_($url, false));
-
-                //             // 		// Flush the data from the session.
-                // // 		$app->setUserState('com_firedrive.edit.document.data', null);
-                // // 	}
-
-                //             // }
-                //         }
 
                 // Set created by
                 $user = Factory::getApplication()->getIdentity();

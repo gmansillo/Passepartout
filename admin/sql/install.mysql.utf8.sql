@@ -13,10 +13,9 @@ CREATE TABLE
         `modified` DATETIME NOT NULL,
         `created_by` INT NOT NULL,
         `modified_by` INT NOT NULL,
-        `file_path` VARCHAR(255) NOT NULL,
-        `file_name` VARCHAR(255) NOT NULL,
-        `file_md5` VARCHAR(32) NOT NULL,
-        `file_size` int NOT NULL,
-
+        `file_path` VARCHAR(255),
+        `file_name` VARCHAR(255) NULL,
+        `file_md5` VARCHAR(32) NULL,
+        `file_size` int NULL,
         PRIMARY KEY (`id`)
     ) ENGINE = InnoDB;
