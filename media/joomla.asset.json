@@ -1,0 +1,15 @@
+{
+    "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+    "name": "com_dory",
+    "version": "1.0.0",
+    "description": "Dory - Joomla! Document Repository",
+    "license": "GPL-2.0-or-later",
+    "namespace": "GiovanniMansillo\\component\\Dory",
+    "assets": [
+    {
+    "name": "com_dory.documents",
+    "type": "style",
+    "uri": "com_dory/documents.css"
+    }
+    ]
+   }
