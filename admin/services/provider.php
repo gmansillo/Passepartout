@@ -21,15 +21,11 @@ return new class implements ServiceProviderInterface {
             ComponentInterface::class,
             function (Container $container) {
 
-                $component = new DoryComponent($container->
-                    get(ComponentDispatcherFactoryInterface::class));
+                $component = new DoryComponent($container->get(ComponentDispatcherFactoryInterface::class));
+                $component->setMVCFactory($container->get(MVCFactoryInterface::class));
 
-                $component->setMVCFactory($container->
-                    get(MVCFactoryInterface::class));
                 return $component;
-                
             }
         );
     }
-
 };

@@ -34,7 +34,15 @@
     </updateservers>
 
     <files folder="site">
+        <folder>src</folder>
+        <folder>tmpl</folder>
     </files>
+
+    <media folder="media" destination="com_dory">
+        <folder>css</folder>
+        <filename>joomla.asset.json</filename>
+    </media>
+
     <administration>
         <files folder="admin">
             <folder>language</folder>

@@ -28,13 +28,22 @@
         type="file"
         label="COM_DORY_DOCUMENT_FILE_UPLOAD"
         validate="extensionblacklist"
+        showon="file_path:"
+    />
+
+    <field
+        addruleprefix="GiovanniMansillo\Component\Dory\Administrator\Rule"
+        name="file_replace"
+        type="file"
+        label="COM_DORY_DOCUMENT_FILE_REPLACE"
+        validate="extensionblacklist"
+        showon="file_path!:"
     />
 
     <field
         name="file_path"
         type="text"
         readonly="true"
-        dlabel="COM_DORY_DOCUMENT_FILE_PATH"
     />
 
     <field
@@ -48,7 +57,6 @@
         name="file_size"
         type="text"
         readonly="true"
-        label="COM_DORY_DOCUMENT_FILE_SIZE"
     />
 
     <field
