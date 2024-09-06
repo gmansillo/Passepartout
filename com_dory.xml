@@ -14,12 +14,23 @@
 
     <install>
         <sql>
-            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+            <file driver="mysql" charset="utf8">sql/mysql/install.utf8.sql</file>
         </sql>
     </install>
+    <uninstall>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/mysql/uninstall.utf8.sql</file>
+        </sql>
+    </uninstall>
+    <update>
+        <schemas>
+            <schemapath type="mysql">sql/mysql</schemapath>
+        </schemas>
+    </update>
 
     <updateservers>
-        <server type="extension" priority="1" name="Dory Update Site">http://api.gmansillo.it/update-dory.xml</server>
+        <server type="extension" priority="1" name="Dory Update Site">
+            http://api.gmansillo.it/update-dory.xml</server>
     </updateservers>
 
     <files folder="site">
@@ -50,5 +61,5 @@
             <menu link="option=com_categories&amp;view=categories&amp;extension=com_dory"
                 img="class:default">COM_DORY_MENU_CATEGORIES</menu>
         </submenu>
-    </administration>   
+    </administration>
 </extension>
