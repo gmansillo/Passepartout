@@ -4,6 +4,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Language\Text;
+use GiovanniMansillo\Component\Dory\Site\Helper\DoryHelper;
 
 HTMLHelper::_('behavior.formvalidator');
 HTMLHelper::_('behavior.keepalive');
@@ -23,72 +24,38 @@ $isNew = !isset($item->id) || $item->id <= 0;
 
         <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'details', 'recall' => true, 'breakpoint' => 768]); ?>
 
-        <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'details', empty($item->id) ? Text::_('COM_DORY_NEW_DOCUMENT') : Text::_('COM_DORY_DOCUMENT_DETAILS')); ?>
+        <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'details', Text::_('COM_DORY_DOCUMENT_DETAILS')); ?>
 
-        <div class="row">
+        <div class="row form-vertical">
             <div class="col-md-9">
-                <div class="form-vertical">
-                    <?php echo $form->renderField('description'); ?>
-                </div>
+                <?php echo $form->renderField('description'); ?>
             </div>
 
             <div class="col-md-3">
-                <div class="form-vertical">
 
-                    <?php if ($item->file_name): ?>
+                <?php if (!$item->file_name): ?>
+                    <?php echo $form->renderField('file_upload'); ?>
+                <?php endif; ?>
 
-                        <!-- <?php echo $form->renderField('file_name'); ?> -->
-
-                        <div class="control-group">
-                            <div class="control-label">
-                                <label id="jform_file-lbl" for="jform_file"><?= Text::_('COM_DORY_DOCUMENT_FILE_NAME'); ?></label>
-                            </div>
-                            <div class="controls">
-
-                                <field
-                                    name="file_path"
-                                    type="text"
-                                    readonly="true"
-                                    dlabel="COM_DORY_DOCUMENT_FILE_PATH" />
-
-                                <div class="row">
-                                    <!-- <div class="col-3">
-                                        <img src="" />
-                                    </div> -->
-                                    <div class="col">
-
-                                        <h5><a href="<?= $item->file_path; ?>" target="_blank"><?= $item->file_name; ?></a> (<?= $item->file_size; ?>byte)</h5>
-                                        <!-- <div class="btn btn-outline-secondary" type="button" id="button-addon2"><i class="icon icon-info"></i></div> -->
-
-                                        <small><?= Text::_('COM_DORY_DOCUMENT_FILE_MD5') ?>: <strong><?= $item->file_md5; ?></strong></small>
-
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <!-- 
-                        <?php echo $form->renderField('file_size'); ?>
-                        <?php echo $form->renderField('file_md5'); ?>
-                        <?php echo $form->renderField('file_path'); ?> -->
-
-                        <?php /* TODO: show formatted document with icon and file data */ ?>
-
-                        <?php echo $form->renderField('file_replace'); ?>
-
-                    <?php else: ?>
-
-                        <?php echo $form->renderField('file_upload'); ?>
-
-                    <?php endif; ?>
-
-                    <?php echo $form->renderFieldset('sideparams'); ?>
-
-                </div>
+                <?php echo $form->renderFieldset('sideparams'); ?>
             </div>
         </div>
+
         <?php echo HTMLHelper::_('uitab.endTab'); ?>
+
+        <?php if ($item->file_name): ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'filedata', Text::_('COM_DORY_DOCUMENT_FILEDATA')); ?>
+
+            <fieldset id="fieldset-filedata" class="options-form">
+                <legend><?php echo Text::_('COM_DORY_DOCUMENT_FILEDATA'); ?></legend>
+                <?php echo $form->renderFieldset('filedata'); ?>
+            </fieldset>
+
+            <?php echo $form->renderField('file_replace'); ?>
+
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+        <?php endif; ?>
+
 
         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'publishing', Text::_('JGLOBAL_FIELDSET_PUBLISHING')); ?>
         <div class="row">

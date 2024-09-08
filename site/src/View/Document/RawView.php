@@ -6,7 +6,7 @@ use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use GiovanniMansillo\Component\Dory\Site\Model\DoocumentModel;
+// use GiovanniMansillo\Component\Dory\Site\Model\DoocumentModel;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;

@@ -6,5 +6,27 @@
             type="text"
             label="COM_DORY_DOCUMENTS_FILTER_SEARCH"
         />
+
+        <field
+            type="category"
+            label="JCATEGORY"
+            extension="com_dory"
+            class="js-select-submit-on-change"
+            addfieldprefix="Joomla\Component\Categories\Administrator\Field"
+        >
+            <option value="">JOPTION_SELECT_CATEGORY</option>
+        </field>
+
+        <field
+            name="access"
+            type="list"
+            label="COM_DORY_ACCESS"
+            class="js-select-submit-on-change"
+        >
+            <option value="">COM_DORY_ACCESS_OPTION_SELECT_ACCESS</option>
+            <option value="0">COM_DORY_ACCESS_OPTION_PUBLIC</option>
+            <option value="1">COM_DORY_ACCESS_OPTION_USERS</option>
+            <option value="2">COM_DORY_ACCESS_OPTION_USERGROUPS</option>
+        </field>
     </fields>
 </form>

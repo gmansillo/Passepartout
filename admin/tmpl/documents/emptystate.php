@@ -15,7 +15,6 @@ use Joomla\CMS\Layout\LayoutHelper;
 $displayData = [
     'textPrefix' => 'COM_DORY',
     'formURL'    => 'index.php?option=com_dory&view=documents',
-    // 'helpURL'    => 'https://docs.joomla.org/Special:MyLanguage/Help40:Banners',
     'icon'       => 'icon-file dory',
 ];
 

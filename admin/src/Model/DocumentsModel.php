@@ -1,4 +1,5 @@
 <?php
+
 namespace GiovanniMansillo\Component\Dory\Administrator\Model;
 
 use Joomla\CMS\MVC\Model\ListModel;

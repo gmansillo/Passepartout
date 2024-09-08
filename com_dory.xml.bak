@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" method="upgrade">
+    <name>COM_DORY</name>
+    <author>Giovanni Mansillo</author>
+    <authorEmail>giovanni.mansillo@gmail.com</authorEmail>
+    <authorUrl>https://dory.gmansillo.it</authorUrl>
+    <creationDate>2024-08-10</creationDate>
+    <copyright>(C) 2022 Giovanni Mansillo</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <version>0.1.0</version>
+    <namespace path="src">GiovanniMansillo\Component\Dory</namespace>
+
+    <scriptfile>script.php</scriptfile>
+
+    <install>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+
+    <updateservers>
+        <server type="extension" priority="1" name="Dory Update Site">
+            http://api.gmansillo.it/update-dory.xml</server>
+    </updateservers>
+
+    <files folder="site">
+        <folder>src</folder>
+        <folder>tmpl</folder>
+    </files>
+
+    <media folder="media" destination="com_dory">
+        <folder>css</folder>
+        <filename>joomla.asset.json</filename>
+    </media>
+
+    <administration>
+        <files folder="admin">
+            <folder>language</folder>
+            <folder>sql</folder>
+            <folder>forms</folder>
+            <folder>src</folder>
+            <folder>tmpl</folder>
+            <file>access.xml</file>
+            <file>config.xml</file>
+        </files>
+
+        <languages>
+            <language tag="en-GB">admin/language/en-GB/en-GB.com_dory.ini</language>
+            <language tag="en-GB">admin/language/en-GB/en-GB.com_dory.sys.ini</language>
+        </languages>
+
+        <menu line="option=com_dory" link="option=com_dory&amp;view=documents" img="class:default">
+            COM_DORY_MENU_BACKEND
+        </menu>
+        <submenu>
+            <menu link="option=com_dory&amp;view=documents" img="class:default">
+                COM_DORY_MENU_DOCUMENTS</menu>
+            <menu link="option=com_categories&amp;view=categories&amp;extension=com_dory"
+                img="class:default">COM_DORY_MENU_CATEGORIES</menu>
+        </submenu>
+    </administration>
+</extension>

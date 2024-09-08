@@ -41,37 +41,43 @@
     />
 
     <field
-        name="file_path"
-        type="text"
-        readonly="true"
-    />
-
-    <field
-        name="file_md5"
-        type="text"
-        readonly="true"
-        label="COM_DORY_DOCUMENT_FILE_MD5"
-    />
-
-    <field
-        name="file_size"
-        type="text"
-        readonly="true"
-    />
-
-    <field
-        name="file_name"
-        type="text"
-        readonly="true"
-        label="COM_DORY_DOCUMENT_FILE_NAME"
-    />
-
-    <field
         name="description"
         type="editor"
         label="JGLOBAL_DESCRIPTION"
         required="false"
     />
+
+    <fieldset name="filedata">
+
+        <field
+            name="file_name"
+            type="text"
+            readonly="true"
+            label="COM_DORY_DOCUMENT_FILE_NAME"
+        />
+
+        <field
+            name="file_size"
+            type="text"
+            readonly="true"
+            label="COM_DORY_DOCUMENT_FILE_SIZE"
+        />
+
+        <field
+            name="file_path"
+            type="text"
+            readonly="true"
+            label="COM_DORY_DOCUMENT_FILE_PATH"
+        />
+
+        <field
+            name="file_md5"
+            type="text"
+            readonly="true"
+            label="COM_DORY_DOCUMENT_FILE_MD5"
+        />
+
+    </fieldset>
 
     <fieldset name="sideparams">
         <field
@@ -79,6 +85,7 @@
             type="list"
             label="JSTATUS"
             default="1"
+            required="required"
             class="form-select-color-state"
             validate="options"
         >
@@ -87,27 +94,29 @@
             <option value="2">JARCHIVED</option>
             <option value="-2">JTRASHED</option>
         </field>
+
         <field
             name="category"
-            type="category"
-            default=""
             extension="com_dory"
             label="JCATEGORY"
             required="true"
+            type="categoryedit"
+            addfieldprefix="Joomla\Component\Categories\Administrator\Field"
+            default=""
+            class="advancedSelect"
         />
-
 
         <field
             name="access"
             type="list"
             label="COM_DORY_ACCESS"
-            default="0"
             filter="integer"
             validate="options"
+            required="required"
         >
-            <option value="0">COM_DORY_ACCESS_OPTION_PUBLIC</option>
-            <option value="1">COM_DORY_ACCESS_OPTION_USERS</option>
-            <option value="2">COM_DORY_ACCESS_OPTION_USERGROUPS</option>
+            <option value="1">COM_DORY_ACCESS_OPTION_PUBLIC</option>
+            <option value="2">COM_DORY_ACCESS_OPTION_USERS</option>
+            <option value="3">COM_DORY_ACCESS_OPTION_USERGROUPS</option>
         </field>
 
         <field
@@ -117,36 +126,40 @@
             checksuperusergroup="1"
             default=""
             multiple="1"
-            showon="access:2"
+            showon="access:3"
             label="COM_DORY_ACCESS_USERGROUPS"
         />
         <field
             name="access_users"
             type="user"
             label="COM_DORY_ACCESS_USERS"
-            showon="access:1"
+            showon="access:2"
         />
 
     </fieldset>
 
-    <field
-        name="created"
-        type="calendar"
-        label="JGLOBAL_FIELD_CREATED_LABEL"
-    />
-    <field
-        name="created_by"
-        type="user"
-        label="JGLOBAL_FIELD_CREATED_BY_LABEL"
-    />
-    <field
-        name="modified"
-        type="calendar"
-        label="JGLOBAL_FIELD_MODIFIED_LABEL"
-    />
-    <field
-        name="modified_by"
-        type="user"
-        label="JGLOBAL_FIELD_MODIFIED_BY_LABEL"
-    />
+    <fieldset name="publishing">
+
+        <field
+            name="created"
+            type="calendar"
+            label="JGLOBAL_FIELD_CREATED_LABEL"
+        />
+        <field
+            name="created_by"
+            type="user"
+            label="JGLOBAL_FIELD_CREATED_BY_LABEL"
+        />
+        <field
+            name="modified"
+            type="calendar"
+            label="JGLOBAL_FIELD_MODIFIED_LABEL"
+        />
+        <field
+            name="modified_by"
+            type="user"
+            label="JGLOBAL_FIELD_MODIFIED_BY_LABEL"
+        />
+
+    </fieldset>
 </form>
