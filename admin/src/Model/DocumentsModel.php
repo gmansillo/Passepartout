@@ -56,10 +56,11 @@ class DocumentsModel extends ListModel
                     $db->quoteName('a.alias'),
                     $db->quoteName('a.description'),
                     $db->quoteName('a.state'),
+                    $db->quoteName('a.hits'),
                     $db->quoteName('c.title', 'category_title'),
                     $db->quoteName('a.category'),
                     $db->quoteName('a.access'),
-                    $db->quoteName('a.file_size')
+                    "JSON_TYPE (" . $db->quoteName('a.file') . ")"
                 ]
             )
         )

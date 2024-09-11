@@ -4,62 +4,43 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Language\Text;
-use GiovanniMansillo\Component\Dory\Site\Helper\DoryHelper;
 
 HTMLHelper::_('behavior.formvalidator');
 HTMLHelper::_('behavior.keepalive');
 
-$item = $this->item;
-$form = $this->form;
-$isNew = !isset($item->id) || $item->id <= 0;
 ?>
 
 <form
-    action="<?php echo Route::_('index.php?option=com_dory&view=document&layout=edit&id=' . (int) $item->id); ?>"
+    action="<?php echo Route::_('index.php?option=com_dory&view=document&layout=edit&id=' . (int) $this->item->id); ?>"
     method="post" name="adminForm" id="document-form" class="form-validate" enctype="multipart/form-data">
 
     <?php echo LayoutHelper::render('joomla.edit.title_alias', $this); ?>
 
     <div class="main-card">
-
         <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'details', 'recall' => true, 'breakpoint' => 768]); ?>
 
         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'details', Text::_('COM_DORY_DOCUMENT_DETAILS')); ?>
-
-        <div class="row form-vertical">
-            <div class="col-md-9">
-                <?php echo $form->renderField('description'); ?>
+        <div class="row ">
+            <div class="col-lg-3 order-lg-5">
+                <fieldset class="form-vertical">
+                    <?php echo $this->form->renderField('state'); ?>
+                    <?php echo $this->form->renderField('file'); ?>
+                    <?php echo $this->form->renderField('file_upload'); ?>
+                    <?php echo $this->form->renderField('category'); ?>
+                    <?php echo $this->form->renderFieldset('accessrules'); ?>
+                </fieldset>
             </div>
-
-            <div class="col-md-3">
-
-                <?php if (!$item->file_name): ?>
-                    <?php echo $form->renderField('file_upload'); ?>
-                <?php endif; ?>
-
-                <?php echo $form->renderFieldset('sideparams'); ?>
+            <div class="col-lg-9 order-lg-1">
+                <fieldset class="form-vertical">
+                    <?php echo $this->form->renderField('description'); ?>
+                </fieldset>
             </div>
         </div>
-
         <?php echo HTMLHelper::_('uitab.endTab'); ?>
-
-        <?php if ($item->file_name): ?>
-            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'filedata', Text::_('COM_DORY_DOCUMENT_FILEDATA')); ?>
-
-            <fieldset id="fieldset-filedata" class="options-form">
-                <legend><?php echo Text::_('COM_DORY_DOCUMENT_FILEDATA'); ?></legend>
-                <?php echo $form->renderFieldset('filedata'); ?>
-            </fieldset>
-
-            <?php echo $form->renderField('file_replace'); ?>
-
-            <?php echo HTMLHelper::_('uitab.endTab'); ?>
-        <?php endif; ?>
-
 
         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'publishing', Text::_('JGLOBAL_FIELDSET_PUBLISHING')); ?>
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-lg-12">
                 <fieldset id="fieldset-publishingdata" class="options-form">
                     <legend><?php echo Text::_('JGLOBAL_FIELDSET_PUBLISHING'); ?></legend>
                     <div>

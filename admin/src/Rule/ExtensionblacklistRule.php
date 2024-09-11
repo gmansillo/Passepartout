@@ -23,7 +23,6 @@ class ExtensionblacklistRule extends FormRule
         return true;
         // TODO: Implement file extension check
 
-
         die("siam qui!" . $value);
 
         /* test 1 */

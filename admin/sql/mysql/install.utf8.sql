@@ -4,6 +4,7 @@ CREATE TABLE
         `title` VARCHAR(255) NOT NULL,
         `alias` VARCHAR(255) NOT NULL,
         `description` TEXT,
+        `hits` INT NOT NULL DEFAULT 0,
         `state` INT NOT NULL,
         `access` INT NOT NULL,
         `access_users` VARCHAR(255),
@@ -13,9 +14,6 @@ CREATE TABLE
         `modified` DATETIME NOT NULL,
         `created_by` INT NOT NULL,
         `modified_by` INT NOT NULL,
-        `file_path` VARCHAR(255),
-        `file_name` VARCHAR(255),
-        `file_md5` VARCHAR(32),
-        `file_size` int,
+        `file` JSON NOT NULL,
         PRIMARY KEY (`id`)
     ) ENGINE = InnoDB;

@@ -8,6 +8,7 @@ use Joomla\CMS\Table\Table;
 use Joomla\Filesystem\File;
 use Joomla\CMS\Form\Form;
 use Joomla\Component\Categories\Administrator\Helper\CategoriesHelper;
+use stdClass;
 
 class DocumentModel extends AdminModel
 {
@@ -33,6 +34,14 @@ class DocumentModel extends AdminModel
         );
         if (empty($form)) {
             return false;
+        }
+
+        $app        =   Factory::getApplication();
+        $id         =   $app->input->get('id', null, 'int');
+
+        if (isset($id)) {
+            $form->setFieldAttribute('file_upload', 'required', 'false');
+            $form->setFieldAttribute('file_upload', 'label', 'COM_DORY_DOCUMENT_FILE_REPLACE');
         }
 
         return $form;
@@ -108,6 +117,7 @@ class DocumentModel extends AdminModel
         $files = $input->files->get('jform');
 
         // TODO: Check max_upload_filesize and warn user
+        // Utility::getMaxUploadSize()
         // TODO: Automatic category creation has a bug in the name
         // TODO: Add removing documents capability
 
@@ -146,7 +156,7 @@ class DocumentModel extends AdminModel
         }
 
         // File
-        $file = $files['file_upload'] ?? $files['file_replace'];
+        $file = $files['file_upload'];
         if (isset($file['size']) && $file['size'] > 0) {
 
             if (isset($file['error']) && !empty($file['error'])) {
@@ -162,22 +172,27 @@ class DocumentModel extends AdminModel
             }
 
             // Delete previous file
-            if ($data['file_path'])
-                if (!File::delete($data["file_path"])) // TODO:  localize warning message
-                    $app->enqueueMessage("Unable to delete previous file. Remove it manually from " . $data["file_path"], 'warning');
+            if ($data['file']) {
+                $fileData = json_decode($data['file'], false);
+                if (!File::delete($fileData->path))
+                    $app->enqueueMessage("Unable to delete previous file. Remove it manually from " . $data["file_path"], 'warning'); // @TODO:  localize warning message
+            }
 
             // File upload
             $dest = JPATH_ADMINISTRATOR . '/components/com_dory/uploads/' . uniqid(random_int(1000, 9999), true);
             if (!File::upload($file["tmp_name"], $dest)) {
-                // TODO: localize error message
-                $app->enqueueMessage("Error encountered uploading " . $file['tmp_name'], 'warning');
+                $app->enqueueMessage("Error encountered uploading " . $file['tmp_name'], 'warning');   // @TODO: localize error message
                 return false;
             }
 
-            $data["file_name"] = File::makeSafe($file['name']);
-            $data["file_md5"] = md5_file($dest);
-            $data["file_size"] = $file['size'];
-            $data["file_path"] = $dest;
+            $data["file"] = json_encode(
+                [
+                    "md5" => md5_file($dest),
+                    "size" => $file['size'],
+                    "path" => $dest,
+                    "name" => File::makeSafe($file['name'])
+                ]
+            );
         }
 
         // Set created by
