@@ -1,12 +1,11 @@
 <?php
 
-namespace GiovanniMansillo\Component\Dory\Site\View\Document;
+namespace GiovanniMansillo\Component\Dory\Administrator\View\Document;
 
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-// use GiovanniMansillo\Component\Dory\Site\Model\DoocumentModel;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -19,6 +18,11 @@ use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
  */
 class RawView extends BaseHtmlView
 {
+    
+    public $form;
+    public $state;
+    public $item;
+
     /**
      * Display the view
      *
@@ -33,9 +37,11 @@ class RawView extends BaseHtmlView
     public function display($tpl = null): void
     {
         /** @var DocumentModel $model */
-        $model = $this->getModel();
-        $item = $model->getItem();
-        $file = json_decode($item->file, false);
+        $this->form = $this->get('Form');
+        $this->state = $this->get('State');
+        $this->item = $this->get('Item');
+        
+        $file = json_decode($this->item->file, false);
 
         // Check for errors.
         if (\count($errors = $this->get('Errors'))) {

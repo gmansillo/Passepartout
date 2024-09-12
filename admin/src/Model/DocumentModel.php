@@ -190,7 +190,8 @@ class DocumentModel extends AdminModel
                     "md5" => md5_file($dest),
                     "size" => $file['size'],
                     "path" => $dest,
-                    "name" => File::makeSafe($file['name'])
+                    "name" => File::makeSafe($file['name']),
+                    "mime_content_type" => mime_content_type($dest),
                 ]
             );
         }
