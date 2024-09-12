@@ -116,10 +116,9 @@ class DocumentModel extends AdminModel
         $table = Table::getInstance('DocumentTable');
         $files = $input->files->get('jform');
 
-        // TODO: Check max_upload_filesize and warn user
-        // Utility::getMaxUploadSize()
-        // TODO: Automatic category creation has a bug in the name
-        // TODO: Add removing documents capability
+        // @TODO: Check max_upload_filesize and warn user - Utility::getMaxUploadSize()
+        // @TODO: Automatic category creation has a bug in the name
+        // @TODO: Add removing documents capability
 
         // Create new category, if needed.
         $createCategory = true;

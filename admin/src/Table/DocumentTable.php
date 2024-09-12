@@ -40,7 +40,7 @@ class DocumentTable extends Table
             $this->alias = $date->format('Y-m-d-H-i-s');
         }
 
-        //TODO : check duplicate aliases
+        // @TODO : check duplicate aliases
 
         // Check for a valid category.
         if (!$this->category = (int) $this->category) {

@@ -160,16 +160,16 @@ class HtmlView extends BaseHtmlView
                     ->listCheck(true);
             }
 
-            //     // Add a batch button
-            //     if (
-            //         $user->authorise('core.create', 'com_banners')
-            //         && $user->authorise('core.edit', 'com_banners')
-            //         && $user->authorise('core.edit.state', 'com_banners')
-            //     ) {
-            //         $childBar->popupButton('batch', 'JTOOLBAR_BATCH')
-            //             ->selector('collapseModal')
-            //             ->listCheck(true);
-            //     }
+                // Add a batch button
+                if (
+                    $user->authorise('core.create', 'com_dory')
+                    && $user->authorise('core.edit', 'com_dory')
+                    && $user->authorise('core.edit.state', 'com_dory')
+                ) {
+                    $childBar->popupButton('batch', 'JTOOLBAR_BATCH')
+                        ->selector('collapseModal')
+                        ->listCheck(true);
+                }
         }
 
         if ($user->authorise('core.admin', 'com_dory') || $user->authorise('core.options', 'com_dory')) {

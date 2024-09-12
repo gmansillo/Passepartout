@@ -21,7 +21,7 @@ class ExtensionblacklistRule extends FormRule
     public function test(\SimpleXMLElement $element, $value, $group = null, Registry $input = null, Form $form = null)
     {
         return true;
-        // TODO: Implement file extension check
+        // @TODO: Implement file extension check
 
         die("siam qui!" . $value);
 

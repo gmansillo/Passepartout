@@ -10,8 +10,6 @@
     <version>0.1.0</version>
     <namespace path="src">GiovanniMansillo\Component\Dory</namespace>
 
-    <scriptfile>script.php</scriptfile>
-
     <install>
         <sql>
             <file driver="mysql" charset="utf8">sql/mysql/install.utf8.sql</file>

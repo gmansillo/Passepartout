@@ -9,7 +9,7 @@ CREATE TABLE
         `access` INT NOT NULL,
         `access_users` VARCHAR(255),
         `access_usergroups` VARCHAR(255),
-        `category` INT NOT NULL,
+        `category` INT unsigned NOT NULL,
         `created` DATETIME NOT NULL,
         `modified` DATETIME NOT NULL,
         `created_by` INT NOT NULL,

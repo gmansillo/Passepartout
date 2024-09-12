@@ -20,7 +20,7 @@ class DocumentModel extends BaseDatabaseModel
 
     function getItem($pk = null)
     {
-        // TODO: check user permissions somewhere
+        // @TODO: check user permissions somewhere
 
         $id = (int) $pk ?: (int) $this->getState('document.id');
         if (!$id) {
