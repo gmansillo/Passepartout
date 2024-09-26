@@ -14,6 +14,10 @@ CREATE TABLE
         `modified` DATETIME NOT NULL,
         `created_by` INT NOT NULL,
         `modified_by` INT NOT NULL,
-        `file` JSON NOT NULL,
+        `file_name` VARCHAR(255) NOT NULL,
+        `file_path` VARCHAR(255) NOT NULL,
+        `file_md5` VARCHAR(32) NOT NULL,
+        `file_mime_content_type` VARCHAR(32) NOT NULL,
+        `file_size` INT NOT NULL,
         PRIMARY KEY (`id`)
     ) ENGINE = InnoDB;

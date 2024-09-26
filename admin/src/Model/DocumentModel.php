@@ -2,6 +2,7 @@
 
 namespace GiovanniMansillo\Component\Dory\Administrator\Model;
 
+use GiovanniMansillo\Component\Dory\Site\Helper\DoryHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Table\Table;
@@ -62,6 +63,9 @@ class DocumentModel extends AdminModel
 
         if (empty($data)) {
             $data = $this->getItem();
+
+            if ($data->get('file_size'))
+                $data->set('file_size', DoryHelper::formatSizeUnits($data->get('file_size')));
 
             // Prime some default values.
             if ($this->getState('document.id') == 0) {
@@ -140,8 +144,7 @@ class DocumentModel extends AdminModel
             ];
 
             /** @var \Joomla\Component\Categories\Administrator\Model\CategoryModel $categoryModel */
-            $categoryModel = $app->bootComponent('com_categories')
-                ->getMVCFactory()->createModel('Category', 'Administrator', ['ignore_request' => true]);
+            $categoryModel = $app->bootComponent('com_categories')->getMVCFactory()->createModel('Category', 'Administrator', ['ignore_request' => true]);
 
             // Create new category.
             if (!$categoryModel->save($category)) {
@@ -184,15 +187,11 @@ class DocumentModel extends AdminModel
                 return false;
             }
 
-            $data["file"] = json_encode(
-                [
-                    "md5" => md5_file($dest),
-                    "size" => $file['size'],
-                    "path" => $dest,
-                    "name" => File::makeSafe($file['name']),
-                    "mime_content_type" => mime_content_type($dest),
-                ]
-            );
+            $data["file_name"] = File::makeSafe($file['name']);
+            $data["file_path"] = $dest;
+            $data["file_size"] = $file['size'];
+            $data["file_md5"] = md5_file($dest);
+            $data["file_mime_content_type"] = mime_content_type($dest);
         }
 
         // Set created by

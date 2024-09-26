@@ -9,14 +9,7 @@ extract($displayData);
 
 $app        =   Factory::getApplication();
 $id         =   $app->input->get('id', null, 'int');
-$file       =   json_decode($value, false);
 
-$attributes = [
-    ' ',
-    $onchange ? ' onchange="' . $onchange . '"' : '',
-];
-
-$addonAfterHtml  = '';
 ?>
 
 <input
@@ -24,25 +17,18 @@ $addonAfterHtml  = '';
     name="<?php echo $name; ?>"
     id="<?php echo $id; ?>"
     value="<?php echo htmlspecialchars($value, ENT_COMPAT, 'UTF-8'); ?>">
-<?php if ($file->size > 0): ?>
-    <div class="input-group">
-        <?php if (!empty($addonBefore)) : ?>
-            <?php echo $addonBeforeHtml; ?>
-        <?php endif; ?>
 
+<?php if ($value): ?>
+    <div class="input-group">
         <input
             class="form-control"
             disabled
             type="text"
-            value="<?php echo htmlspecialchars($file->name, ENT_COMPAT, 'UTF-8'); ?>"
+            value="<?php echo htmlspecialchars($value, ENT_COMPAT, 'UTF-8'); ?>"
             readonly="readonly">
 
         <a href="./index.php?option=com_dory&view=document&id=<?= $id; ?>&format=raw" target="_blank" class="btn btn-primary"></a>
 
     </div>
-
-    <br>
-
-    Size: <strong><?= DoryHelper::formatSizeUnits($file->size) ?></strong>
 
 <?php endif; ?>

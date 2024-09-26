@@ -41,23 +41,21 @@ class RawView extends BaseHtmlView
         $this->state = $this->get('State');
         $this->item = $this->get('Item');
         
-        $file = json_decode($this->item->file, false);
-
         // Check for errors.
         if (\count($errors = $this->get('Errors'))) {
             throw new GenericDataException(implode("\n", $errors), 500);
         }
 
-        $this->getDocument()->setMimeEncoding($file->mime_content_type ?? 'application/octet-stream');
+        $this->getDocument()->setMimeEncoding($this->item->file_mime_content_type ?? 'application/octet-stream');
 
         /** @var CMSApplication $app */
         $app = Factory::getApplication();
         $app->setHeader(
             'Content-disposition',
-            'attachment; filename="' . $file->name . '"; creation-date="' . Factory::getDate()->toRFC822() . '"',
+            'attachment; filename="' . $this->item->file_name . '"; creation-date="' . Factory::getDate()->toRFC822() . '"',
             true
         );
 
-        echo file_get_contents($file->path);
+        echo file_get_contents($this->item->file_path);
     }
 }
