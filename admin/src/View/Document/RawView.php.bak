@@ -1,6 +1,6 @@
 <?php
 
-namespace GiovanniMansillo\Component\Dory\Site\View\Document;
+namespace GiovanniMansillo\Component\Dory\Administrator\View\Document;
 
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Factory;
@@ -18,6 +18,11 @@ use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
  */
 class RawView extends BaseHtmlView
 {
+    
+    public $form;
+    public $state;
+    public $item;
+
     /**
      * Display the view
      *
@@ -32,24 +37,25 @@ class RawView extends BaseHtmlView
     public function display($tpl = null): void
     {
         /** @var DocumentModel $model */
-        $model = $this->getModel();
-        $item = $model->getItem();
-
+        $this->form = $this->get('Form');
+        $this->state = $this->get('State');
+        $this->item = $this->get('Item');
+        
         // Check for errors.
         if (\count($errors = $this->get('Errors'))) {
             throw new GenericDataException(implode("\n", $errors), 500);
         }
 
-        $this->getDocument()->setMimeEncoding('application/octet-stream');
+        $this->getDocument()->setMimeEncoding($this->item->file_mime_content_type ?? 'application/octet-stream');
 
         /** @var CMSApplication $app */
         $app = Factory::getApplication();
         $app->setHeader(
             'Content-disposition',
-            'attachment; filename="' . $item->file_name . '"; creation-date="' . Factory::getDate()->toRFC822() . '"',
+            'attachment; filename="' . $this->item->file_name . '"; creation-date="' . Factory::getDate()->toRFC822() . '"',
             true
         );
 
-        echo file_get_contents($item->file_path);
+        echo file_get_contents($this->item->file_path);
     }
 }

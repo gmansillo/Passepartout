@@ -1,24 +1,20 @@
 <?php
-
 namespace GiovanniMansillo\Component\Dory\Administrator\View\Document;
 
-use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Toolbar\Toolbar;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use GiovanniMansillo\Component\Dory\Administrator\Model\DocumentModel;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
-
-/**
- * View class for a list of tracks.
- *
- * @since  1.6
- */
-class RawView extends BaseHtmlView
-{
-    
 
 /**
  * View to edit a document.
@@ -62,40 +58,44 @@ class HtmlView extends BaseHtmlView
      *
      * @throws  \Exception
      */
-
-    /**
-     * Display the view
-     *
-     * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
-     *
-     * @return  void
-     *
-     * @since   1.6
-     *
-     * @throws  \Exception
-     */
     public function display($tpl = null): void
     {
         /** @var DocumentModel $model */
-        $this->form = $this->get('Form');
-        $this->state = $this->get('State');
-        $this->item = $this->get('Item');
-        
+        $model       = $this->getModel();
+        $this->form  = $model->getForm();
+        $this->item  = $model->getItem();
+        $this->state = $model->getState();
+
         // Check for errors.
         if (\count($errors = $this->get('Errors'))) {
             throw new GenericDataException(implode("\n", $errors), 500);
         }
 
-        $this->getDocument()->setMimeEncoding($this->item->file_mime_content_type ?? 'application/octet-stream');
+        $this->addToolbar();
 
-        /** @var CMSApplication $app */
-        $app = Factory::getApplication();
-        $app->setHeader(
-            'Content-disposition',
-            'attachment; filename="' . $this->item->file_name . '"; creation-date="' . Factory::getDate()->toRFC822() . '"',
-            true
-        );
+        parent::display($tpl);
+    }
 
-        echo file_get_contents($this->item->file_path);
+    /**
+     * Add the page title and toolbar.
+     *
+     * @return  void
+     *
+     * @since   1.6
+     * @throws  \Exception
+     */
+    protected function addToolbar()
+    {
+        Factory::getApplication()->getInput()->set('hidemainmenu', true);
+
+        $isNew = ($this->item->id == 0);
+        $canDo = ContentHelper::getActions('com_dory');
+        $toolbar = Toolbar::getInstance();
+        ToolbarHelper::title(Text::_('COM_DORY_DOCUMENT_TITLE_' . ($isNew ? 'ADD' : 'EDIT')), "file dory");
+        if ($canDo->get('core.create')) {
+            $toolbar->apply('document.apply');
+            $toolbar->save('document.save');
+        }
+        $toolbar->cancel('document.cancel', 'JTOOLBAR_CLOSE');
     }
 }

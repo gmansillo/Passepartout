@@ -1,18 +1,205 @@
 <?php
 
+/**
+ * @package     GiovanniMansillo.Dory
+ * @subpackage  com_dory
+ *
+ * @copyright   2024 Giovanni Mansillo <https://www.gmansillo.it>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
 namespace GiovanniMansillo\Component\Dory\Administrator\Model;
 
 use GiovanniMansillo\Component\Dory\Site\Helper\DoryHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Table\Table;
-use Joomla\Filesystem\File;
-use Joomla\CMS\Form\Form;
+use Joomla\CMS\Table\TableInterface;
+use Joomla\CMS\Versioning\VersionableModelTrait;
 use Joomla\Component\Categories\Administrator\Helper\CategoriesHelper;
-use stdClass;
+use Joomla\Database\ParameterType;
+use Joomla\Filesystem\File;
 
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
+
+/**
+ * Document model.
+ *
+ * @since  1.6
+ */
 class DocumentModel extends AdminModel
 {
+    use VersionableModelTrait;
+
+    /**
+     * The prefix to use with controller messages.
+     *
+     * @var    string
+     * @since  1.6
+     */
+    protected $text_prefix = 'COM_DORY_DOCUMENT';
+
+    /**
+     * The type alias for this content type.
+     *
+     * @var    string
+     * @since  3.2
+     */
+    public $typeAlias = 'com_dory.document';
+
+    /**
+     * Batch copy/move command. If set to false, the batch copy/move command is not supported
+     *
+     * @var  string
+     */
+    protected $batch_copymove = 'category_id';
+
+    /**
+     * Allowed batch commands
+     *
+     * @var  array
+     */
+    protected $batch_commands = [
+        'client_id'   => 'batchClient',
+        'language_id' => 'batchLanguage',
+    ];
+
+    /**
+     * Data cleanup after batch copying data
+     *
+     * @param   TableInterface  $table  The table object containing the newly created item
+     * @param   integer         $newId  The id of the new item
+     * @param   integer         $oldId  The original item id
+     *
+     * @return  void
+     *
+     * @since  4.3.2
+     */
+    protected function cleanupPostBatchCopy(TableInterface $table, $newId, $oldId)
+    {
+        // Initialise clicks and impmade
+        $db    = $this->getDatabase();
+
+        $query = $db->getQuery(true)
+            ->update($db->quoteName('#__dory_documents'))
+            ->set($db->quoteName('clicks') . ' = 0')
+            ->set($db->quoteName('impmade') . ' = 0')
+            ->where($db->quoteName('id') . ' = :newId')
+            ->bind(':newId', $newId, ParameterType::INTEGER);
+
+        $db->setQuery($query);
+        $db->execute();
+    }
+
+
+    /**
+     * Batch client changes for a group of documents.
+     *
+     * @param   string  $value     The new value matching a client.
+     * @param   array   $pks       An array of row IDs.
+     * @param   array   $contexts  An array of item contexts.
+     *
+     * @return  boolean  True if successful, false otherwise and internal error is set.
+     *
+     * @since   2.5
+     */
+    protected function batchClient($value, $pks, $contexts)
+    {
+        // Set the variables
+        $user = $this->getCurrentUser();
+
+        /** @var \GiovanniMansillo\Component\Dory\Administrator\Table\DocumentTable $table */
+        $table = $this->getTable();
+
+        foreach ($pks as $pk) {
+            if (!$user->authorise('core.edit', $contexts[$pk])) {
+                $this->setError(Text::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'));
+
+                return false;
+            }
+
+            $table->reset();
+            $table->load($pk);
+            $table->cid = (int) $value;
+
+            if (!$table->store()) {
+                $this->setError($table->getError());
+
+                return false;
+            }
+        }
+
+        // Clean the cache
+        $this->cleanCache();
+
+        return true;
+    }
+
+    /**
+     * Method to test whether a record can be deleted.
+     *
+     * @param   object  $record  A record object.
+     *
+     * @return  boolean  True if allowed to delete the record. Defaults to the permission set in the component.
+     *
+     * @since   1.6
+     */
+    protected function canDelete($record)
+    {
+        if (empty($record->id) || $record->state != -2) {
+            return false;
+        }
+
+        if (!empty($record->catid)) {
+            return $this->getCurrentUser()->authorise('core.delete', 'com_dory.category.' . (int) $record->catid);
+        }
+
+        return parent::canDelete($record);
+    }
+
+    /**
+     * A method to preprocess generating a new title in order to allow tables with alternative names
+     * for alias and title to use the batch move and copy methods
+     *
+     * @param   integer  $categoryId  The target category id
+     * @param   Table    $table       The \Joomla\CMS\Table\Table within which move or copy is taking place
+     *
+     * @return  void
+     *
+     * @since   3.8.12
+     */
+    public function generateTitle($categoryId, $table)
+    {
+        // Alter the title & alias
+        $data         = $this->generateNewTitle($categoryId, $table->alias, $table->name);
+        $table->name  = $data['0'];
+        $table->alias = $data['1'];
+    }
+
+    /**
+     * Method to test whether a record can have its state changed.
+     *
+     * @param   object  $record  A record object.
+     *
+     * @return  boolean  True if allowed to change the state of the record. Defaults to the permission set in the component.
+     *
+     * @since   1.6
+     */
+    protected function canEditState($record)
+    {
+        // Check against the category.
+        if (!empty($record->catid)) {
+            return $this->getCurrentUser()->authorise('core.edit.state', 'com_dory.category.' . (int) $record->catid);
+        }
+
+        // Default to component settings if category not known.
+        return parent::canEditState($record);
+    }
+
     /**
      * Method to get the record form.
      *
@@ -25,16 +212,32 @@ class DocumentModel extends AdminModel
      */
     public function getForm($data = [], $loadData = true)
     {
-        $form = $this->loadForm(
-            'com_dory.document', //  instructs the method to look for the document.xml file inside the forms folder of the backend
-            'document',
-            [
-                'control' => 'jform',
-                'load_data' => $loadData
-            ]
-        );
+        // Get the form.
+        $form = $this->loadForm('com_dory.document', 'document', ['control' => 'jform', 'load_data' => $loadData]); //  instructs the method to look for the document.xml file inside the forms folder of the backend
+
         if (empty($form)) {
             return false;
+        }
+
+        // Modify the form based on access controls.
+        if (!$this->canEditState((object) $data)) {
+            // Disable fields for display.
+            $form->setFieldAttribute('ordering', 'disabled', 'true');
+            $form->setFieldAttribute('publish_up', 'disabled', 'true');
+            $form->setFieldAttribute('publish_down', 'disabled', 'true');
+            $form->setFieldAttribute('state', 'disabled', 'true');
+
+            // Disable fields while saving.
+            // The controller has already verified this is a record you can edit.
+            $form->setFieldAttribute('ordering', 'filter', 'unset');
+            $form->setFieldAttribute('publish_up', 'filter', 'unset');
+            $form->setFieldAttribute('publish_down', 'filter', 'unset');
+            $form->setFieldAttribute('state', 'filter', 'unset');
+        }
+
+        // Don't allow to change the created_by user if not allowed to access com_users.
+        if (!$this->getCurrentUser()->authorise('core.manage', 'com_users')) {
+            $form->setFieldAttribute('created_by', 'filter', 'unset');
         }
 
         $app        =   Factory::getApplication();
@@ -42,7 +245,7 @@ class DocumentModel extends AdminModel
 
         if (isset($id)) {
             $form->setFieldAttribute('file_upload', 'required', 'false');
-            $form->setFieldAttribute('file_upload', 'label', 'COM_DORY_DOCUMENT_FILE_REPLACE');
+            $form->setFieldAttribute('file_upload', 'label', 'COM_DORY_FIELD_FILE_REPLACE_LABEL');
         }
 
         return $form;
@@ -58,7 +261,7 @@ class DocumentModel extends AdminModel
     protected function loadFormData()
     {
         // Check the session for previously entered form data.
-        $app = Factory::getApplication();
+        $app  = Factory::getApplication();
         $data = $app->getUserState('com_dory.edit.document.data', []);
 
         if (empty($data)) {
@@ -72,13 +275,73 @@ class DocumentModel extends AdminModel
                 $filters     = (array) $app->getUserState('com_dory.documents.filter');
                 $filterCatId = $filters['category_id'] ?? null;
 
-                $data->set('category', $app->getInput()->getInt('category', $filterCatId));
+                $data->set('catid', $app->getInput()->getInt('catid', $filterCatId));
             }
         }
 
         $this->preprocessData('com_dory.document', $data);
 
         return $data;
+    }
+
+    /**
+     * A protected method to get a set of ordering conditions.
+     *
+     * @param   Table  $table  A record object.
+     *
+     * @return  array  An array of conditions to add to ordering queries.
+     *
+     * @since   1.6
+     */
+    protected function getReorderConditions($table)
+    {
+        $db = $this->getDatabase();
+
+        return [
+            $db->quoteName('catid') . ' = ' . (int) $table->catid,
+            $db->quoteName('state') . ' >= 0',
+        ];
+    }
+
+    /**
+     * Prepare and sanitise the table prior to saving.
+     *
+     * @param   Table  $table  A Table object.
+     *
+     * @return  void
+     *
+     * @since   1.6
+     */
+    protected function prepareTable($table)
+    {
+        $date = Factory::getDate();
+        $user = $this->getCurrentUser();
+
+        if (empty($table->id)) {
+            // Set the values
+            $table->created    = $date->toSql();
+            $table->created_by = $user->id;
+
+            // Set ordering to the last item if not set
+            if (empty($table->ordering)) {
+                $db    = $this->getDatabase();
+                $query = $db->getQuery(true)
+                    ->select('MAX(' . $db->quoteName('ordering') . ')')
+                    ->from($db->quoteName('#__dory_documents'));
+
+                $db->setQuery($query);
+                $max = $db->loadResult();
+
+                $table->ordering = $max + 1;
+            }
+        } else {
+            // Set the values
+            $table->modified    = $date->toSql();
+            $table->modified_by = $user->id;
+        }
+
+        // Increment the content version number.
+        $table->version++;
     }
 
     /**
@@ -95,10 +358,10 @@ class DocumentModel extends AdminModel
     protected function preprocessForm(Form $form, $data, $group = 'content')
     {
         if ($this->canCreateCategory()) {
-            $form->setFieldAttribute('category', 'allowAdd', 'true');
+            $form->setFieldAttribute('catid', 'allowAdd', 'true');
 
             // Add a prefix for categories created on the fly.
-            $form->setFieldAttribute('category', 'customPrefix', '#new#');
+            $form->setFieldAttribute('catid', 'customPrefix', '#new#');
         }
 
         parent::preprocessForm($form, $data, $group);
@@ -128,15 +391,15 @@ class DocumentModel extends AdminModel
         $createCategory = true;
 
         // If category ID is provided, check if it's valid.
-        if (is_numeric($data['category']) && $data['category']) {
-            $createCategory = !CategoriesHelper::validateCategoryId($data['category'], 'com_dory');
+        if (is_numeric($data['catid']) && $data['catid']) {
+            $createCategory = !CategoriesHelper::validateCategoryId($data['catid'], 'com_dory');
         }
 
         // Save New Category
         if ($createCategory && $this->canCreateCategory()) {
             $category = [
                 // Remove #new# prefix, if exists.
-                'title'     => strpos($data['category'], '#new#') === 0 ? substr($data['category'], 5) : $data['category'],
+                'title'     => strpos($data['catid'], '#new#') === 0 ? substr($data['catid'], 5) : $data['catid'],
                 'parent_id' => 1,
                 'extension' => 'com_dory',
                 'language'  => $data['language'],
@@ -144,7 +407,8 @@ class DocumentModel extends AdminModel
             ];
 
             /** @var \Joomla\Component\Categories\Administrator\Model\CategoryModel $categoryModel */
-            $categoryModel = $app->bootComponent('com_categories')->getMVCFactory()->createModel('Category', 'Administrator', ['ignore_request' => true]);
+            $categoryModel = Factory::getApplication()->bootComponent('com_categories')
+                ->getMVCFactory()->createModel('Category', 'Administrator', ['ignore_request' => true]);
 
             // Create new category.
             if (!$categoryModel->save($category)) {
@@ -154,7 +418,31 @@ class DocumentModel extends AdminModel
             }
 
             // Get the new category ID.
-            $data['category'] = $categoryModel->getState('category.id');
+            $data['catid'] = $categoryModel->getState('category.id');
+        }
+
+        // Alter the name for save as copy
+        if ($input->get('task') == 'save2copy') {
+            /** @var \GiovanniMansillo\Component\Dory\Administrator\Table\DocumentTable $origTable */
+            $origTable = clone $this->getTable();
+            $origTable->load($input->getInt('id'));
+
+            if ($data['name'] == $origTable->name) {
+                list($name, $alias) = $this->generateNewTitle($data['catid'], $data['alias'], $data['name']);
+                $data['name']       = $name;
+                $data['alias']      = $alias;
+            } else {
+                if ($data['alias'] == $origTable->alias) {
+                    $data['alias'] = '';
+                }
+            }
+
+            $data['state'] = 0;
+        }
+
+        if ($input->get('task') == 'save2copy' || $input->get('task') == 'copy') {
+            $data['clicks']  = 0;
+            $data['impmade'] = 0;
         }
 
         // File
@@ -191,18 +479,6 @@ class DocumentModel extends AdminModel
             $data["file_path"] = $dest;
             $data["file_size"] = $file['size'];
             $data["file_md5"] = md5_file($dest);
-            $data["file_mime_content_type"] = mime_content_type($dest);
-        }
-
-        // Set created by
-        $user = Factory::getApplication()->getIdentity();
-        if (!(int) $data['created_by']) {
-            $data['created_by'] = $user->id;
-        }
-
-        // Set modified
-        if (!(int) $data['modified_by']) {
-            $data['modified_by'] = $data['created_by'];
         }
 
         return parent::save($data);

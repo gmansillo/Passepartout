@@ -1,12 +1,81 @@
 <?php
+
+/**
+ * @package     GiovanniMansillo.Dory
+ * @subpackage  com_dory
+ *
+ * @copyright   2024 Giovanni Mansillo <https://www.gmansillo.it>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
 namespace GiovanniMansillo\Component\Dory\Administrator\Controller;
 
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Router\Route;
+use GiovanniMansillo\Component\Dory\Administrator\Helper\DocumentsHelper;
 
-# the first file the Joomla! MVC checks after the component bootup
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
+/**
+ * Documents display controller.
+ *
+ * @since  1.6
+ */
 class DisplayController extends BaseController
 {
-    // Define the default view for the component
+    /**
+     * The default view.
+     *
+     * @var    string
+     * @since  1.6
+     */
     protected $default_view = 'documents';
+
+    /**
+     * Method to display a view.
+     *
+     * @param   boolean  $cachable   If true, the view output will be cached
+     * @param   array    $urlparams  An array of safe URL parameters and their variable types
+     *                   @see        \Joomla\CMS\Filter\InputFilter::clean() for valid values.
+     *
+     * @return  BaseController|boolean  This object to support chaining.
+     *
+     * @since   1.5
+     */
+    public function display($cachable = false, $urlparams = [])
+    {
+        DocumentsHelper::updateReset();
+
+        $view   = $this->input->get('view', 'documents');
+        $layout = $this->input->get('layout', 'default');
+        $id     = $this->input->getInt('id');
+
+        // Check for edit form.
+        if ($view === 'document' && $layout === 'edit' && !$this->checkEditId('com_dory.edit.document', $id)) {
+            // Somehow the person just went to the form - we don't allow that.
+            if (!\count($this->app->getMessageQueue())) {
+                $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id), 'error');
+            }
+
+            $this->setRedirect(Route::_('index.php?option=com_dory&view=documents', false));
+
+            return false;
+        }
+
+        if ($view === 'client' && $layout === 'edit' && !$this->checkEditId('com_dory.edit.client', $id)) {
+            // Somehow the person just went to the form - we don't allow that.
+            if (!\count($this->app->getMessageQueue())) {
+                $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id), 'error');
+            }
+
+            $this->setRedirect(Route::_('index.php?option=com_dory&view=clients', false));
+
+            return false;
+        }
+
+        return parent::display();
+    }
 }

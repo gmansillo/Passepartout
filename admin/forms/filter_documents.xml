@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form>
+<form addfieldprefix="GiovanniMansillo\Component\Dory\Administrator\Field">
     <fields name="filter">
         <field
             name="search"
             type="text"
+            inputmode="search"
             label="COM_DORY_DOCUMENTS_FILTER_SEARCH"
+            description="COM_DORY_DOCUMENTS_FILTER_SEARCH_DESC"
+            hint="JSEARCH_FILTER"
         />
 
-        <field
+		<field
+			name="published"
+			type="status"
+			label="JSTATUS"
+			class="js-select-submit-on-change"
+			>
+			<option value="">JOPTION_SELECT_PUBLISHED</option>
+		</field>
+
+		<field
+        	name="category_id"
             type="category"
             label="JCATEGORY"
             extension="com_dory"
@@ -17,16 +30,60 @@
             <option value="">JOPTION_SELECT_CATEGORY</option>
         </field>
 
-        <field
-            name="access"
-            type="list"
-            label="COM_DORY_ACCESS"
-            class="js-select-submit-on-change"
-        >
-            <option value="">COM_DORY_ACCESS_OPTION_SELECT_ACCESS</option>
-            <option value="0">COM_DORY_ACCESS_OPTION_PUBLIC</option>
-            <option value="1">COM_DORY_ACCESS_OPTION_USERS</option>
-            <option value="2">COM_DORY_ACCESS_OPTION_USERGROUPS</option>
-        </field>
-    </fields>
+		<field
+			name="language"
+			type="contentlanguage"
+			label="JGRID_HEADING_LANGUAGE"
+			class="js-select-submit-on-change"
+			>
+			<option value="">JOPTION_SELECT_LANGUAGE</option>
+			<option value="*">JALL</option>
+		</field>
+
+		<field
+			name="level"
+			type="integer"
+			label="JGLOBAL_MAXLEVEL_LABEL"
+			first="1"
+			last="10"
+			step="1"
+			languages="*"
+			class="js-select-submit-on-change"
+			>
+			<option value="">JOPTION_SELECT_MAX_LEVELS</option>
+		</field>
+	</fields>
+	<fields name="list">
+		<field
+			name="fullordering"
+			type="list"
+			label="JGLOBAL_SORT_BY"
+			statuses="*,0,1,2,-2"
+			class="js-select-submit-on-change"
+			default="a.name ASC"
+			validate="options"
+			>
+			<option value="">JGLOBAL_SORT_BY</option>
+			<option value="a.ordering ASC">JGRID_HEADING_ORDERING_ASC</option>
+			<option value="a.ordering DESC">JGRID_HEADING_ORDERING_DESC</option>
+			<option value="a.state ASC">JSTATUS_ASC</option>
+			<option value="a.state DESC">JSTATUS_DESC</option>
+			<option value="a.name ASC">JGLOBAL_NAME_ASC</option>
+			<option value="a.name DESC">JGLOBAL_NAME_DESC</option>
+			<option value="category_title ASC">JCATEGORY_ASC</option>
+			<option value="category_title DESC">JCATEGORY_DESC</option>
+			<option value="a.language ASC" requires="multilanguage">JGRID_HEADING_LANGUAGE_ASC</option>
+			<option value="a.language DESC" requires="multilanguage">JGRID_HEADING_LANGUAGE_DESC</option>
+			<option value="a.id ASC">JGRID_HEADING_ID_ASC</option>
+			<option value="a.id DESC">JGRID_HEADING_ID_DESC</option>
+		</field>
+
+		<field
+			name="limit"
+			type="limitbox"
+			label="JGLOBAL_LIST_LIMIT"
+			default="25"
+			class="js-select-submit-on-change"
+		/>
+	</fields>
 </form>

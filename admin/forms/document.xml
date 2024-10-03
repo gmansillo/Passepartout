@@ -4,7 +4,7 @@
 
     <fieldset name="title_alias">
         <field
-            name="title"
+            name="name"
             type="text"
             label="JGLOBAL_TITLE"
             required="true"
@@ -45,45 +45,36 @@
         addfieldprefix="GiovanniMansillo\Component\Dory\Administrator\Field"
         name="file_name"
         type="uploadedfile"
-        label="COM_DORY_DOCUMENT_FILE_NAME"
+        label="COM_DORY_FIELD_FILE_NAME_LABEL"
         readonly="true"
-        showon="id!:"
+        showon="id!:[AND]id!:0"
     />
 
     <field
         name="file_path"
         type="text"
-        label="COM_DORY_DOCUMENT_FILE_PATH"
+        label="COM_DORY_FIELD_FILE_PATH_LABEL"
         readonly="true"
         disabled="disabled"
-        showon="id!:"
+        showon="id!:[AND]id!:0"
     />
 
     <field
         name="file_size"
         type="text"
-        label="COM_DORY_DOCUMENT_FILE_SIZE"
+        label="COM_DORY_FIELD_FILE_SIZE_LABEL"
         readonly="true"
         disabled="disabled"
-        showon="id!:"
-    />
-
-    <field
-        name="file_mime_content_type"
-        type="text"
-        label="COM_DORY_DOCUMENT_FILE_MIME_CONTENT_TYPE"
-        readonly="true"
-        disabled="disabled"
-        showon="id!:"
+        showon="id!:[AND]id!:0"
     />
 
     <field
         name="file_md5"
         type="text"
-        label="COM_DORY_DOCUMENT_FILE_MD5"
+        label="COM_DORY_FIELD_FILE_MD5_LABEL"
         readonly="true"
         disabled="disabled"
-        showon="id!:"
+        showon="id!:[AND]id!:0"
     />
 
     <field
@@ -91,13 +82,13 @@
         addruleprefix="GiovanniMansillo\Component\Dory\Administrator\Rule"
         name="file_upload"
         type="enhancedfile"
-        label="COM_DORY_DOCUMENT_FILE_UPLOAD"
+        label="COM_DORY_FIELD_FILE_UPLOAD_LABEL"
         validate="extensionblacklist"
         required="required"
     />
 
     <field
-        name="category"
+        name="catid"
         extension="com_dory"
         label="JCATEGORY"
         required="true"
@@ -111,13 +102,13 @@
         <field
             name="access"
             type="list"
-            label="COM_DORY_ACCESS"
+            label="COM_DORY_FIELD_ACCESS_LABEL"
             filter="integer"
             validate="options"
         >
-            <option value="1">COM_DORY_ACCESS_OPTION_PUBLIC</option>
-            <option value="2">COM_DORY_ACCESS_OPTION_USERS</option>
-            <option value="3">COM_DORY_ACCESS_OPTION_USERGROUPS</option>
+            <option value="1">COM_DORY_FIELD_ACCESS_OPTION_PUBLIC_VALUE</option>
+            <option value="2">COM_DORY_FIELD_ACCESS_OPTION_USERS_VALUE</option>
+            <option value="3">COM_DORY_FIELD_ACCESS_OPTION_USERGROUPS_VALUE</option>
         </field>
 
         <field
@@ -128,13 +119,13 @@
             default=""
             multiple="1"
             showon="access:3"
-            label="COM_DORY_ACCESS_USERGROUPS"
+            label="COM_DORY_FIELD_ACCESS_USERGROUPS_LABEL"
         />
 
         <field
             name="access_users"
             type="user"
-            label="COM_DORY_ACCESS_USERS"
+            label="COM_DORY_FIELD_ACCESS_USERS_LABEL"
             showon="access:2"
         />
     </fieldset>

@@ -1,13 +1,40 @@
 <?php
 
+/**
+ * @package     GiovanniMansillo.Dory
+ * @subpackage  com_dory
+ *
+ * @copyright   2024 Giovanni Mansillo <https://www.gmansillo.it>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
 namespace GiovanniMansillo\Component\Dory\Administrator\Model;
 
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Table\Table;
+use Joomla\Database\ParameterType;
 use Joomla\CMS\Factory;
 use JText;
 
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
+
+/**
+ * Methods supporting a list of document records.
+ *
+ * @since  1.6
+ */
 class DocumentsModel extends ListModel
 {
+    /**
+     * Constructor.
+     *
+     * @param   array  $config  An optional associative array of configuration settings.
+     *
+     * @since   1.6
+     */
     public function __construct($config = [])
     {
         if (empty($config['filter_fields'])) {
@@ -24,6 +51,7 @@ class DocumentsModel extends ListModel
                 'a.hits'
             ];
         }
+
         parent::__construct($config);
     }
 
@@ -43,9 +71,16 @@ class DocumentsModel extends ListModel
         parent::populateState($ordering, $direction);
     }
 
+    /**
+     * Build an SQL query to load the list data.
+     *
+     * @return  \Joomla\Database\DatabaseQuery
+     *
+     * @since   1.6
+     */
     protected function getListQuery()
     {
-        $db = $this->getDatabase();
+        $db    = $this->getDatabase();
         $query = $db->getQuery(true);
         $query->select(
             $this->getState(

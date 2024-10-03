@@ -4,13 +4,15 @@
  * @package     GiovanniMansillo.Dory
  * @subpackage  com_dory
  *
- * @copyright   (C) 2021 Open Source Matters, Inc. <https://www.joomla.org>
+ * @copyright   2024 Giovanni Mansillo <https://www.gmansillo.it>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Layout\LayoutHelper;
+
+/** @var \GiovanniMansillo\Component\Dory\Administrator\View\Documents\HtmlView $this */
 
 $displayData = [
     'textPrefix' => 'COM_DORY',

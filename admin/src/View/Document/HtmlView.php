@@ -1,27 +1,73 @@
 <?php
 namespace GiovanniMansillo\Component\Dory\Administrator\View\Document;
 
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Form;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use GiovanniMansillo\Component\Dory\Administrator\Model\DocumentModel;
 
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
+
+/**
+ * View to edit a document.
+ *
+ * @since  1.5
+ */
 class HtmlView extends BaseHtmlView
 {
-    public $form;
-    public $state;
-    public $item;
+    /**
+     * The Form object
+     *
+     * @var    Form
+     * @since  1.5
+     */
+    protected $form;
 
+    /**
+     * The active item
+     *
+     * @var    object
+     * @since  1.5
+     */
+    protected $item;
+
+    /**
+     * The model state
+     *
+     * @var    object
+     * @since  1.5
+     */
+    protected $state;
+
+    /**
+     * Display the view
+     *
+     * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
+     *
+     * @return  void
+     *
+     * @since   1.5
+     *
+     * @throws  \Exception
+     */
     public function display($tpl = null): void
     {
-        $this->form = $this->get('Form');
-        $this->state = $this->get('State');
-        $this->item = $this->get('Item');
+        /** @var DocumentModel $model */
+        $model       = $this->getModel();
+        $this->form  = $model->getForm();
+        $this->item  = $model->getItem();
+        $this->state = $model->getState();
 
-        if (count($errors = $this->get('Errors'))) {
+        // Check for errors.
+        if (\count($errors = $this->get('Errors'))) {
             throw new GenericDataException(implode("\n", $errors), 500);
         }
 
@@ -31,10 +77,14 @@ class HtmlView extends BaseHtmlView
     }
 
     /**
-     * Add the action buttons, Save, Apply, and Cancel, with the code Joomla! already provided for it
-     * @return void
+     * Add the page title and toolbar.
+     *
+     * @return  void
+     *
+     * @since   1.6
+     * @throws  \Exception
      */
-    protected function addToolbar()
+    protected function addToolbar(): void
     {
         Factory::getApplication()->getInput()->set('hidemainmenu', true);
 

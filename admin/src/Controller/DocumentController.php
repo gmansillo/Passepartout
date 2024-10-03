@@ -1,8 +1,17 @@
 <?php
 
+/**
+ * @package     GiovanniMansillo.Dory
+ * @subpackage  com_dory
+ *
+ * @copyright   2024 Giovanni Mansillo <https://www.gmansillo.it>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
 namespace GiovanniMansillo\Component\Dory\Administrator\Controller;
 
 use Joomla\CMS\MVC\Controller\FormController;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Versioning\VersionableControllerTrait;
 use Joomla\Utilities\ArrayHelper;
 
@@ -10,6 +19,11 @@ use Joomla\Utilities\ArrayHelper;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
+/**
+ * Document controller class.
+ *
+ * @since  1.6
+ */
 class DocumentController extends FormController
 {
     use VersionableControllerTrait;
@@ -34,7 +48,7 @@ class DocumentController extends FormController
     protected function allowAdd($data = [])
     {
         $filter     = $this->input->getInt('filter_category_id');
-        $categoryId = ArrayHelper::getValue($data, 'category', $filter, 'int');
+        $categoryId = ArrayHelper::getValue($data, 'catid', $filter, 'int');
 
         if ($categoryId) {
             // If the category has been passed in the URL check it.
@@ -45,7 +59,7 @@ class DocumentController extends FormController
         return parent::allowAdd($data);
     }
 
-     /**
+    /**
      * Method override to check if you can edit an existing record.
      *
      * @param   array   $data  An array of input data.
@@ -71,5 +85,27 @@ class DocumentController extends FormController
 
         // Since there is no asset tracking, revert to the component permissions.
         return parent::allowEdit($data, $key);
+    }
+
+    /**
+     * Method to run batch operations.
+     *
+     * @param   string  $model  The model
+     *
+     * @return  boolean  True on success.
+     *
+     * @since   2.5
+     */
+    public function batch($model = null)
+    {
+        $this->checkToken();
+
+        // Set the model
+        $model = $this->getModel('Document', '', []);
+
+        // Preset the redirect
+        $this->setRedirect(Route::_('index.php?option=com_dory&view=documents' . $this->getRedirectToListAppend(), false));
+
+        return parent::batch($model);
     }
 }

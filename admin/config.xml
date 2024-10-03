@@ -1,21 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <config>
-    <fieldset name="company_data" label="COM_DORY_CONFIG_FIELDSET_COMPANY_DATA_LABEL"
-        description="COM_DORY_CONFIG_FIELDSET_COMPANY_DATA_DESCRIPTION">
-        <field
-            type="text"
-            label="COM_DORY_CONFIG_COMPANY_NAME_LABEL"
-            description="COM_DORY_CONFIG_COMPANY_NAME_DESCRIPTION"
-        />
-        <field
-            type="text"
-            label="COM_DORY_CONFIG_COMPANY_ADDRESS_LABEL"
-            description="COM_DORY_CONFIG_COMPANY_ADDRESS_DESCRIPTION"
-        />
-        <field
-            type="text"
-            label="COM_DORY_CONFIG_COMPANY_ID_LABEL"
-            description="COM_DORY_CONFIG_COMPANY_ID_DESCRIPTION"
-        />
+	<help key="Dory:_Options"/>
+	<inlinehelp button="show"/>
+	<fieldset
+		name="component"
+		label="COM_DORY_FIELDSET_CONFIG_CLIENT_OPTIONS_LABEL"
+		description="COM_DORY_FIELDSET_CONFIG_CLIENT_OPTIONS_DESC"
+		>
+
+		<field
+			name="track_impressions"
+			type="radio"
+			layout="joomla.form.field.radio.switcher"
+			label="COM_DORY_FIELD_TRACKIMPRESSION_LABEL"
+			default="0"
+			>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
     </fieldset>
 </config>

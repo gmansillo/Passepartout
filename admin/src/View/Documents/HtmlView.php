@@ -121,7 +121,8 @@ class HtmlView extends BaseHtmlView
             $toolbar->addNew('document.add');
         }
 
-        if (!$this->isEmptyState && ($canDo->get('core.edit.state') || ($this->state->get('filter.published') == -2 && $canDo->get('core.delete')))) {
+
+        if ((!$this->isEmptyState && ($canDo->get('core.edit.state') ) || ($this->state->get('filter.published') == -2 && $canDo->get('core.delete'))) {
 
             /** @var  DropdownButton $dropdown */
             $dropdown = $toolbar->dropdownButton('status-group', 'JTOOLBAR_CHANGE_STATUS')
@@ -159,17 +160,6 @@ class HtmlView extends BaseHtmlView
                     ->message('JGLOBAL_CONFIRM_DELETE')
                     ->listCheck(true);
             }
-
-                // Add a batch button
-                if (
-                    $user->authorise('core.create', 'com_dory')
-                    && $user->authorise('core.edit', 'com_dory')
-                    && $user->authorise('core.edit.state', 'com_dory')
-                ) {
-                    $childBar->popupButton('batch', 'JTOOLBAR_BATCH')
-                        ->selector('collapseModal')
-                        ->listCheck(true);
-                }
         }
 
         if ($user->authorise('core.admin', 'com_dory') || $user->authorise('core.options', 'com_dory')) {

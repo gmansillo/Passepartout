@@ -1,1 +1,0 @@
-DROP TABLE `#__dory_documents`;
