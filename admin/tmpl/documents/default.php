@@ -144,7 +144,7 @@ if ($saveOrder && !empty($this->items)) {
                                         </div>
                                     </th>
                                     <td class="small d-none d-md-table-cell">
-                                        <?php echo $accessLevels[$item->access]; ?>
+                                        <?php echo $accessLevels[$item->access_level]; ?>
                                     </td>
                                     <td class="small d-none d-md-table-cell">
                                         <span class="badge bg-<?= $item->downloads > 0 ? "success": "danger" ?>"><?php echo $item->downloads; ?></span>

@@ -1,4 +1,13 @@
 <?php
+
+/**
+ * @package     GiovanniMansillo.Dory
+ * @subpackage  com_dory
+ *
+ * @copyright   2024 Giovanni Mansillo <https://www.gmansillo.it>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
 namespace GiovanniMansillo\Component\Dory\Administrator\View\Document;
 
 use Joomla\CMS\Component\ComponentHelper;
@@ -88,14 +97,53 @@ class HtmlView extends BaseHtmlView
     {
         Factory::getApplication()->getInput()->set('hidemainmenu', true);
 
-        $isNew = ($this->item->id == 0);
-        $canDo = ContentHelper::getActions('com_dory');
-        $toolbar = Toolbar::getInstance();
-        ToolbarHelper::title(Text::_('COM_DORY_DOCUMENT_TITLE_' . ($isNew ? 'ADD' : 'EDIT')), "file dory");
-        if ($canDo->get('core.create')) {
+        $user       = $this->getCurrentUser();
+        $userId     = $user->id;
+        $isNew      = ($this->item->id == 0);
+        $checkedOut = !(\is_null($this->item->checked_out) || $this->item->checked_out == $userId);
+        $toolbar    = Toolbar::getInstance();
+
+        // Since we don't track these assets at the item level, use the category id.
+        $canDo = ContentHelper::getActions('com_dory', 'category', $this->item->catid);
+
+        ToolbarHelper::title($isNew ? Text::_('COM_DORY_MANAGER_DOCUMENT_NEW') : Text::_('COM_DORY_MANAGER_DOCUMENT_EDIT'), 'bookmark file');
+
+        // If not checked out, can save the item.
+        if (!$checkedOut && ($canDo->get('core.edit') || \count($user->getAuthorisedCategories('com_dory', 'core.create')) > 0)) {
             $toolbar->apply('document.apply');
-            $toolbar->save('document.save');
         }
-        $toolbar->cancel('document.cancel', 'JTOOLBAR_CLOSE');
+
+        $saveGroup = $toolbar->dropdownButton('save-group');
+
+        $saveGroup->configure(
+            function (Toolbar $childBar) use ($checkedOut, $canDo, $user, $isNew) {
+                // If not checked out, can save the item.
+                if (!$checkedOut && ($canDo->get('core.edit') || \count($user->getAuthorisedCategories('com_dory', 'core.create')) > 0)) {
+                    $childBar->save('document.save');
+
+                    if ($canDo->get('core.create')) {
+                        $childBar->save2new('document.save2new');
+                    }
+                }
+
+                // If an existing item, can save to a copy.
+                if (!$isNew && $canDo->get('core.create')) {
+                    $childBar->save2copy('document.save2copy');
+                }
+            }
+        );
+
+        if (empty($this->item->id)) {
+            $toolbar->cancel('document.cancel', 'JTOOLBAR_CANCEL');
+        } else {
+            $toolbar->cancel('document.cancel');
+
+            if (ComponentHelper::isEnabled('com_contenthistory') && $this->state->params->get('save_history', 0) && $canDo->get('core.edit')) {
+                $toolbar->versions('com_dory.document', $this->item->id);
+            }
+        }
+
+        $toolbar->divider();
+        $toolbar->help('Documents:_Edit');
     }
 }

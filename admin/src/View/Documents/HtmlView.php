@@ -1,15 +1,27 @@
 <?php
+
+/**
+ * @package     GiovanniMansillo.Dory
+ * @subpackage  com_dory
+ *
+ * @copyright   2024 Giovanni Mansillo <https://www.gmansillo.it>
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
 namespace GiovanniMansillo\Component\Dory\Administrator\View\Documents;
 
+use Joomla\CMS\Form\Form;
+use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Language\Multilanguage;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use Joomla\CMS\Form\Form;
-use Joomla\Registry\Registry;
 use Joomla\CMS\Pagination\Pagination;
-use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Toolbar\Button\DropdownButton;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Language\Text;
+use GiovanniMansillo\Component\Dory\Administrator\Model\DocumentsModel;
+use Joomla\Registry\Registry;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -31,12 +43,20 @@ class HtmlView extends BaseHtmlView
     public $filterForm;
 
     /**
-     * The model state
+     * The active search filters
      *
-     * @var    Registry
+     * @var    array
      * @since  1.6
      */
-    public $state;
+    public $activeFilters = [];
+
+    /**
+     * Category data
+     *
+     * @var    array
+     * @since  1.6
+     */
+    protected $categories = [];
 
     /**
      * An array of items
@@ -44,7 +64,7 @@ class HtmlView extends BaseHtmlView
      * @var    array
      * @since  1.6
      */
-    public $items = [];
+    protected $items = [];
 
     /**
      * The pagination object
@@ -52,15 +72,15 @@ class HtmlView extends BaseHtmlView
      * @var    Pagination
      * @since  1.6
      */
-    public $pagination;
+    protected $pagination;
 
     /**
-     * The active search filters
+     * The model state
      *
-     * @var    array
+     * @var    Registry
      * @since  1.6
      */
-    public $activeFilters = [];
+    protected $state;
 
     /**
      * Is this view an Empty State
@@ -82,22 +102,31 @@ class HtmlView extends BaseHtmlView
      */
     public function display($tpl = null): void
     {
-        $this->state = $this->get('State');
-        $this->items = $this->get('Items'); // Calls the getItems() method in the model, which retrieves the items from the database
-        $this->pagination = $this->get('Pagination');
-        $this->filterForm = $this->get('FilterForm');
-        $this->activeFilters = $this->get('ActiveFilters');
+        /** @var DocumentsModel $model */
+        $model               = $this->getModel();
+        $this->categories    = $model->getCategoryOrders();
+        $this->items         = $model->getItems();
+        $this->pagination    = $model->getPagination();
+        $this->state         = $model->getState();
+        $this->filterForm    = $model->getFilterForm();
+        $this->activeFilters = $model->getActiveFilters();
+
+        if (!\count($this->items) && $this->isEmptyState = $this->get('IsEmptyState')) {
+            $this->setLayout('emptystate');
+        }
 
         // Check for errors.
         if (\count($errors = $this->get('Errors'))) {
             throw new GenericDataException(implode("\n", $errors), 500);
         }
 
-        if (!\count($this->items) && $this->isEmptyState = $this->get('IsEmptyState')) {
-            $this->setLayout('emptystate');
-        }
-
         $this->addToolbar();
+
+        // We do not need to filter by language when multilingual is disabled
+        if (!Multilanguage::isEnabled()) {
+            unset($this->activeFilters['language']);
+            $this->filterForm->removeField('language', 'filter');
+        }
 
         parent::display($tpl);
     }
@@ -111,19 +140,17 @@ class HtmlView extends BaseHtmlView
      */
     protected function addToolbar(): void
     {
-        $canDo = ContentHelper::getActions('com_dory', 'category', $this->state->get('filter.category_id'));
-        $user = $this->getCurrentUser();
+        $canDo   = ContentHelper::getActions('com_dory', 'category', $this->state->get('filter.category_id'));
+        $user    = $this->getCurrentUser();
         $toolbar = Toolbar::getInstance();
 
-        ToolbarHelper::title(Text::_('COM_DORY_MANAGER_DOCUMENTS'), 'file dory');
+        ToolbarHelper::title(Text::_('COM_DORY_MANAGER_DOCUMENTS'), 'bookmark file');
 
         if ($canDo->get('core.create') || \count($user->getAuthorisedCategories('com_dory', 'core.create')) > 0) {
             $toolbar->addNew('document.add');
         }
 
-
-        if ((!$this->isEmptyState && ($canDo->get('core.edit.state') ) || ($this->state->get('filter.published') == -2 && $canDo->get('core.delete'))) {
-
+        if (!$this->isEmptyState && ($canDo->get('core.edit.state') || ($this->state->get('filter.published') == -2 && $canDo->get('core.delete')))) {
             /** @var  DropdownButton $dropdown */
             $dropdown = $toolbar->dropdownButton('status-group', 'JTOOLBAR_CHANGE_STATUS')
                 ->toggleSplit(false)
@@ -160,12 +187,25 @@ class HtmlView extends BaseHtmlView
                     ->message('JGLOBAL_CONFIRM_DELETE')
                     ->listCheck(true);
             }
+
+            // // Add a batch button
+            // if (
+            //     $user->authorise('core.create', 'com_dory')
+            //     && $user->authorise('core.edit', 'com_dory')
+            //     && $user->authorise('core.edit.state', 'com_dory')
+            // ) {
+            //     $childBar->popupButton('batch', 'JTOOLBAR_BATCH')
+            //         ->popupType('inline')
+            //         ->textHeader(Text::_('COM_DORY_BATCH_OPTIONS'))
+            //         ->url('#joomla-dialog-batch')
+            //         ->modalWidth('800px')
+            //         ->modalHeight('fit-content')
+            //         ->listCheck(true);
+            // }
         }
 
         if ($user->authorise('core.admin', 'com_dory') || $user->authorise('core.options', 'com_dory')) {
             $toolbar->preferences('com_dory');
         }
-
-        $toolbar->help('Documents');
     }
 }

@@ -6,7 +6,7 @@
 	<copyright>(C) 2024 Giovanni Mansillo</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorEmail>giovanni.mansillo@gmail.com</authorEmail>
-	<authorUrl>https://dory.gmansillo.it</authorUrl>
+	<authorUrl>https://gmansillo.it</authorUrl>
 	<version>0.1.0</version>
 	<description>COM_DORY_XML_DESCRIPTION</description>
 	<namespace path="src">GiovanniMansillo\Component\Dory</namespace>
@@ -22,7 +22,6 @@
 	</uninstall>
 	<files folder="site">
 		<folder>src</folder>
-		<folder>tmpl</folder>
 	</files>
 	
 	<!-- <languages folder="site">
@@ -59,7 +58,6 @@
         </submenu>
         <files folder="admin">
 			<filename>access.xml</filename>
-			<filename>dory.xml</filename>
 			<filename>config.xml</filename>
 			<folder>forms</folder>
             <folder>layouts</folder>

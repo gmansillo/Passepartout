@@ -21,6 +21,9 @@ use Joomla\CMS\Versioning\VersionableModelTrait;
 use Joomla\Component\Categories\Administrator\Helper\CategoriesHelper;
 use Joomla\Database\ParameterType;
 use Joomla\Filesystem\File;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Utility\Utility;
+use Joomla\CMS\HTML\HTMLHelper;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -243,7 +246,7 @@ class DocumentModel extends AdminModel
         $app        =   Factory::getApplication();
         $id         =   $app->input->get('id', null, 'int');
 
-        if (isset($id)) {
+        if (isset($id) && $id > 0) {
             $form->setFieldAttribute('file_upload', 'required', 'false');
             $form->setFieldAttribute('file_upload', 'label', 'COM_DORY_FIELD_FILE_REPLACE_LABEL');
         }
@@ -267,8 +270,10 @@ class DocumentModel extends AdminModel
         if (empty($data)) {
             $data = $this->getItem();
 
-            if ($data->get('file_size'))
-                $data->set('file_size', DoryHelper::formatSizeUnits($data->get('file_size')));
+            if ($data->get('file_size')) {
+                $file_size = HTMLHelper::_('number.bytes', Utility::getMaxUploadSize($data->get('file_size') . 'MB'));
+                $data->set('file_size', $file_size); // Don't worry about replacing the value since it never will be written on the DB
+            }
 
             // Prime some default values.
             if ($this->getState('document.id') == 0) {
@@ -368,6 +373,33 @@ class DocumentModel extends AdminModel
     }
 
     /**
+     * Method to delete document
+     *
+     * @param   array  $pks  Primary keys of logs
+     *
+     * @return  boolean
+     *
+     * @since   3.9.0
+     */
+    public function delete(&$pks)
+    {
+        $app = Factory::getApplication();
+        $table = $this->getTable();
+
+        foreach ($pks as $pk) {
+            if ($table->load($pk)) {
+                try {
+                    File::delete($table->file_path);
+                } catch (\RuntimeException $e) {
+                    $app->enqueueMessage($e->getMessage(), 'warning');
+                }
+            }
+        }
+
+        return parent::delete($pks);
+    }
+
+    /**
      * Method to save the form data.
      *
      * @param   array  $data  The form data.
@@ -382,10 +414,7 @@ class DocumentModel extends AdminModel
         $input = $app->getInput();
         $table = Table::getInstance('DocumentTable');
         $files = $input->files->get('jform');
-
-        // @TODO: Check max_upload_filesize and warn user - Utility::getMaxUploadSize()
-        // @TODO: Automatic category creation has a bug in the name
-        // @TODO: Add removing documents capability
+        $params  = ComponentHelper::getParams('com_dory');
 
         // Create new category, if needed.
         $createCategory = true;
@@ -449,6 +478,33 @@ class DocumentModel extends AdminModel
         $file = $files['file_upload'];
         if (isset($file['size']) && $file['size'] > 0) {
 
+            // @TODO: move validation in custom field validation
+            if ($file['size'] > Utility::getMaxUploadSize()) {
+
+                // @TODO: localize error message
+                $error_message = 'File extension ".' . $extension . '" not admitted';
+                $app->enqueueMessage($error_message, 'error');
+
+                return false;
+            }
+
+            $blacklistedExtensionsParam = $params->get('blacklisted_extensions', '');
+            $blacklistedExtensionsList = array_map('trim', explode(',', $blacklistedExtensionsParam));
+
+            $extension = File::getExt($file['name']);
+            if (in_array($extension, $blacklistedExtensionsList)) {
+
+                // @TODO: localize error message
+                $error_message = 'File extension ".' . $extension . '" not admitted';
+                $app->enqueueMessage($error_message, 'error');
+
+                return false;
+            }
+
+            // @TODO: Check max_upload_filesize and warn user - ()
+
+
+
             if (isset($file['error']) && !empty($file['error'])) {
                 $app->enqueueMessage($file['error'], 'warning');
                 return false;
@@ -456,7 +512,7 @@ class DocumentModel extends AdminModel
 
             // Ensure that a malicious user hasn't tried to trick the script into working on files upon which it should not be working--for instance, /etc/passwd.
             if (!file_exists($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
-                // TODO: localize error message
+                // @TODO: localize error message
                 $app->enqueueMessage("Error encountered uploading " . $file['tmp_name'], 'warning');
                 return false;
             }
@@ -465,13 +521,15 @@ class DocumentModel extends AdminModel
             if ($data['file']) {
                 $fileData = json_decode($data['file'], false);
                 if (!File::delete($fileData->path))
-                    $app->enqueueMessage("Unable to delete previous file. Remove it manually from " . $data["file_path"], 'warning'); // @TODO:  localize warning message
+                    // @TODO:  localize warning message
+                    $app->enqueueMessage("Unable to delete previous file. Remove it manually from " . $data["file_path"], 'warning');
             }
 
             // File upload
             $dest = JPATH_ADMINISTRATOR . '/components/com_dory/uploads/' . uniqid(random_int(1000, 9999), true);
             if (!File::upload($file["tmp_name"], $dest)) {
-                $app->enqueueMessage("Error encountered uploading " . $file['tmp_name'], 'warning');   // @TODO: localize error message
+                // @TODO: localize error message
+                $app->enqueueMessage("Error encountered uploading " . $file['tmp_name'], 'warning');
                 return false;
             }
 

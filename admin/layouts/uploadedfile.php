@@ -1,7 +1,6 @@
 <?php
 
 use Joomla\CMS\Factory;
-use GiovanniMansillo\Component\Dory\Site\Helper\DoryHelper;
 
 defined('_JEXEC') or die;
 
@@ -18,17 +17,16 @@ $id         =   $app->input->get('id', null, 'int');
     id="<?php echo $id; ?>"
     value="<?php echo htmlspecialchars($value, ENT_COMPAT, 'UTF-8'); ?>">
 
-<?php if ($value): ?>
-    <div class="input-group">
-        <input
-            class="form-control"
-            disabled
-            type="text"
-            value="<?php echo htmlspecialchars($value, ENT_COMPAT, 'UTF-8'); ?>"
-            readonly="readonly">
+<div class="input-group">
+    <input
+        class="form-control"
+        disabled
+        type="text"
+        value="<?php echo htmlspecialchars($value, ENT_COMPAT, 'UTF-8'); ?>"
+        readonly="readonly">
 
-        <a href="./index.php?option=com_dory&view=document&id=<?= $id; ?>&format=raw" target="_blank" class="btn btn-primary"></a>
+    <?php if ($value): ?>
+        <a href="./index.php?option=com_dory&view=document&id=<?= $id; ?>&format=raw" target="_blank" class="btn btn-primary"> </a>
+    <?php endif; ?>
 
-    </div>
-
-<?php endif; ?>
+</div>

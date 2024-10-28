@@ -65,17 +65,6 @@ class DisplayController extends BaseController
             return false;
         }
 
-        if ($view === 'client' && $layout === 'edit' && !$this->checkEditId('com_dory.edit.client', $id)) {
-            // Somehow the person just went to the form - we don't allow that.
-            if (!\count($this->app->getMessageQueue())) {
-                $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id), 'error');
-            }
-
-            $this->setRedirect(Route::_('index.php?option=com_dory&view=clients', false));
-
-            return false;
-        }
-
         return parent::display();
     }
 }
