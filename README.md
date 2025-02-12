@@ -1,2 +1,2 @@
-# dory
+# Passepartout
 Joomla! 5 Document Repository
