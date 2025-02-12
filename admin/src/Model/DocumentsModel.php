@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @package     GiovanniMansillo.Dory
- * @subpackage  com_dory
+ * @package     GiovanniMansillo.Passepartout
+ * @subpackage  com_passepartout
  *
  * @copyright   2024 Giovanni Mansillo <https://www.gmansillo.it>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace GiovanniMansillo\Component\Dory\Administrator\Model;
+namespace GiovanniMansillo\Component\Passepartout\Administrator\Model;
 
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\MVC\Model\ListModel;
@@ -78,7 +78,7 @@ class DocumentsModel extends ListModel
                         $db->quoteName('catid'),
                     ]
                 )
-                ->from($db->quoteName('#__dory_documents'))
+                ->from($db->quoteName('#__passepartout_documents'))
                 ->group($db->quoteName('catid'));
             $db->setQuery($query);
             $this->cache['categoryorders'] = $db->loadAssocList('catid', 0);
@@ -128,7 +128,7 @@ class DocumentsModel extends ListModel
                     $db->quoteName('c.title', 'category_title')
                 ]
             )
-            ->from($db->quoteName('#__dory_documents', 'a'))
+            ->from($db->quoteName('#__passepartout_documents', 'a'))
             ->join('LEFT', $db->quoteName('#__languages', 'l'), $db->quoteName('l.lang_code') . ' = ' . $db->quoteName('a.language'))
             ->join('LEFT', $db->quoteName('#__users', 'uc'), $db->quoteName('uc.id') . ' = ' . $db->quoteName('a.checked_out'))
             ->join('LEFT', $db->quoteName('#__categories', 'c'), $db->quoteName('c.id') . ' = ' . $db->quoteName('a.catid'));
@@ -266,7 +266,7 @@ class DocumentsModel extends ListModel
     protected function populateState($ordering = 'a.name', $direction = 'asc')
     {
         // Load the parameters.
-        $this->setState('params', ComponentHelper::getParams('com_dory'));
+        $this->setState('params', ComponentHelper::getParams('com_passepartout'));
 
         // List state information.
         parent::populateState($ordering, $direction);

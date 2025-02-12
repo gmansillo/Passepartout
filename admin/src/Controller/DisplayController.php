@@ -1,19 +1,19 @@
 <?php
 
 /**
- * @package     GiovanniMansillo.Dory
- * @subpackage  com_dory
+ * @package     GiovanniMansillo.Passepartout
+ * @subpackage  com_passepartout
  *
  * @copyright   2024 Giovanni Mansillo <https://www.gmansillo.it>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace GiovanniMansillo\Component\Dory\Administrator\Controller;
+namespace GiovanniMansillo\Component\Passepartout\Administrator\Controller;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Router\Route;
-use GiovanniMansillo\Component\Dory\Administrator\Helper\DocumentsHelper;
+use GiovanniMansillo\Component\Passepartout\Administrator\Helper\DocumentsHelper;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -54,13 +54,13 @@ class DisplayController extends BaseController
         $id     = $this->input->getInt('id');
 
         // Check for edit form.
-        if ($view === 'document' && $layout === 'edit' && !$this->checkEditId('com_dory.edit.document', $id)) {
+        if ($view === 'document' && $layout === 'edit' && !$this->checkEditId('com_passepartout.edit.document', $id)) {
             // Somehow the person just went to the form - we don't allow that.
             if (!\count($this->app->getMessageQueue())) {
                 $this->setMessage(Text::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id), 'error');
             }
 
-            $this->setRedirect(Route::_('index.php?option=com_dory&view=documents', false));
+            $this->setRedirect(Route::_('index.php?option=com_passepartout&view=documents', false));
 
             return false;
         }

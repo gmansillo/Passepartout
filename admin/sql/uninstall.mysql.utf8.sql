@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS `#__dory_documents`;
+DROP TABLE IF EXISTS `#__passepartout_documents`;

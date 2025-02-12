@@ -1,6 +1,6 @@
 <?php
 
-namespace GiovanniMansillo\Component\Dory\Administrator\Field;
+namespace GiovanniMansillo\Component\Passepartout\Administrator\Field;
 
 use Joomla\CMS\Form\Field\TextField;
 

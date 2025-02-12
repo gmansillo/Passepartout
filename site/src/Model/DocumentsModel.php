@@ -1,6 +1,6 @@
 <?php
 
-namespace GiovanniMansillo\Component\Dory\Site\Model;
+namespace GiovanniMansillo\Component\Passepartout\Site\Model;
 
 defined('_JEXEC') or die;
 
@@ -32,7 +32,7 @@ class DocumentsModel extends ListModel
                     $db->quoteName('a.file_size'),
                 ]
             )
-        )->from($db->quoteName('#__dory_documents', 'a'));
+        )->from($db->quoteName('#__passepartout_documents', 'a'));
         $orderCol = $this->state->get(
             'list.ordering',
             'a.title'

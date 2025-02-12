@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
-	<help key="Dory:_Options" />
-	<inlinehelp button="show" />
 	<fieldset
 		name="component"
-		label="COM_DORY_FIELDSET_CONFIG_EXTENSIONS_OPTIONS_LABEL"
-		description="COM_DORY_FIELDSET_CONFIG_EXTENSIONS_OPTIONS_DESC"
+		label="COM_PASSEPARTOUT_FIELDSET_CONFIG_EXTENSIONS_OPTIONS_LABEL"
+		description="COM_PASSEPARTOUT_FIELDSET_CONFIG_EXTENSIONS_OPTIONS_DESC"
 	>
 
 		<field
 			name="blacklisted_extensions"
 			type="text"
-			label="COM_DORY_FIELD_BLACKLISTED_EXTENSIONS_LABEL"
-			description="COM_DORY_FIELD_BLACKLISTED_EXTENSIONS_DESC"
+			label="COM_PASSEPARTOUT_FIELD_BLACKLISTED_EXTENSIONS_LABEL"
+			description="COM_PASSEPARTOUT_FIELD_BLACKLISTED_EXTENSIONS_DESC"
 			default="chm,pif,reg,scr,sct,hlp,shs,shb,msi,js,java,class,com,dll,dmg,drv,grp,ocx,ovl,sys,vdl,vxd,exe,cmd,sh,php,do,bin,lnk,scf,ink"
 		/>
 	</fieldset>

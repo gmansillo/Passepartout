@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form addfieldprefix="GiovanniMansillo\Component\Dory\Administrator\Field">
+<form addfieldprefix="GiovanniMansillo\Component\Passepartout\Administrator\Field">
     <fields name="filter">
         <field
             name="search"
             type="text"
             inputmode="search"
-            label="COM_DORY_DOCUMENTS_FILTER_SEARCH"
-            description="COM_DORY_DOCUMENTS_FILTER_SEARCH_DESC"
+            label="COM_PASSEPARTOUT_DOCUMENTS_FILTER_SEARCH"
+            description="COM_PASSEPARTOUT_DOCUMENTS_FILTER_SEARCH_DESC"
             hint="JSEARCH_FILTER"
         />
 
@@ -23,7 +23,7 @@
         	name="category_id"
             type="category"
             label="JCATEGORY"
-            extension="com_dory"
+            extension="com_passepartout"
             class="js-select-submit-on-change"
             addfieldprefix="Joomla\Component\Categories\Administrator\Field"
         >

@@ -6,7 +6,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 
 $wam = Factory::getApplication()->getDocument()->getWebAssetManager();
-$wam->useStyle('com_dory.documents');
+$wam->useStyle('com_passepartout.documents');
 
 ?>
 

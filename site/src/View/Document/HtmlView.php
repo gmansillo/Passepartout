@@ -1,6 +1,6 @@
 <?php
 
-namespace GiovanniMansillo\Component\Dory\Site\View\Document;
+namespace GiovanniMansillo\Component\Passepartout\Site\View\Document;
 
 \defined('_JEXEC') or die;
 

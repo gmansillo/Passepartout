@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @package     GiovanniMansillo.Dory
- * @subpackage  com_dory
+ * @package     GiovanniMansillo.Passepartout
+ * @subpackage  com_passepartout
  *
  * @copyright   2024 Giovanni Mansillo <https://www.gmansillo.it>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace GiovanniMansillo\Component\Dory\Administrator\View\Document;
+namespace GiovanniMansillo\Component\Passepartout\Administrator\View\Document;
 
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
@@ -19,7 +19,7 @@ use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use GiovanniMansillo\Component\Dory\Administrator\Model\DocumentModel;
+use GiovanniMansillo\Component\Passepartout\Administrator\Model\DocumentModel;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -104,12 +104,12 @@ class HtmlView extends BaseHtmlView
         $toolbar    = Toolbar::getInstance();
 
         // Since we don't track these assets at the item level, use the category id.
-        $canDo = ContentHelper::getActions('com_dory', 'category', $this->item->catid);
+        $canDo = ContentHelper::getActions('com_passepartout', 'category', $this->item->catid);
 
-        ToolbarHelper::title($isNew ? Text::_('COM_DORY_MANAGER_DOCUMENT_NEW') : Text::_('COM_DORY_MANAGER_DOCUMENT_EDIT'), 'bookmark file');
+        ToolbarHelper::title($isNew ? Text::_('COM_PASSEPARTOUT_MANAGER_DOCUMENT_NEW') : Text::_('COM_PASSEPARTOUT_MANAGER_DOCUMENT_EDIT'), 'bookmark file');
 
         // If not checked out, can save the item.
-        if (!$checkedOut && ($canDo->get('core.edit') || \count($user->getAuthorisedCategories('com_dory', 'core.create')) > 0)) {
+        if (!$checkedOut && ($canDo->get('core.edit') || \count($user->getAuthorisedCategories('com_passepartout', 'core.create')) > 0)) {
             $toolbar->apply('document.apply');
         }
 
@@ -118,7 +118,7 @@ class HtmlView extends BaseHtmlView
         $saveGroup->configure(
             function (Toolbar $childBar) use ($checkedOut, $canDo, $user, $isNew) {
                 // If not checked out, can save the item.
-                if (!$checkedOut && ($canDo->get('core.edit') || \count($user->getAuthorisedCategories('com_dory', 'core.create')) > 0)) {
+                if (!$checkedOut && ($canDo->get('core.edit') || \count($user->getAuthorisedCategories('com_passepartout', 'core.create')) > 0)) {
                     $childBar->save('document.save');
 
                     if ($canDo->get('core.create')) {
@@ -139,11 +139,10 @@ class HtmlView extends BaseHtmlView
             $toolbar->cancel('document.cancel');
 
             if (ComponentHelper::isEnabled('com_contenthistory') && $this->state->params->get('save_history', 0) && $canDo->get('core.edit')) {
-                $toolbar->versions('com_dory.document', $this->item->id);
+                $toolbar->versions('com_passepartout.document', $this->item->id);
             }
         }
 
         $toolbar->divider();
-        $toolbar->help('Documents:_Edit');
     }
 }

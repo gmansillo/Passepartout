@@ -1,16 +1,16 @@
 <?php
 
 /**
- * @package     GiovanniMansillo.Dory
- * @subpackage  com_dory
+ * @package     GiovanniMansillo.Passepartout
+ * @subpackage  com_passepartout
  *
  * @copyright   2024 Giovanni Mansillo <https://www.gmansillo.it>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace GiovanniMansillo\Component\Dory\Administrator\Model;
+namespace GiovanniMansillo\Component\Passepartout\Administrator\Model;
 
-use GiovanniMansillo\Component\Dory\Site\Helper\DoryHelper;
+use GiovanniMansillo\Component\Passepartout\Site\Helper\PassepartoutHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
@@ -24,6 +24,7 @@ use Joomla\Filesystem\File;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Utility\Utility;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\Filesystem\Path;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -44,7 +45,7 @@ class DocumentModel extends AdminModel
      * @var    string
      * @since  1.6
      */
-    protected $text_prefix = 'COM_DORY_DOCUMENT';
+    protected $text_prefix = 'COM_PASSEPARTOUT_DOCUMENT';
 
     /**
      * The type alias for this content type.
@@ -52,7 +53,7 @@ class DocumentModel extends AdminModel
      * @var    string
      * @since  3.2
      */
-    public $typeAlias = 'com_dory.document';
+    public $typeAlias = 'com_passepartout.document';
 
     /**
      * Batch copy/move command. If set to false, the batch copy/move command is not supported
@@ -67,9 +68,12 @@ class DocumentModel extends AdminModel
      * @var  array
      */
     protected $batch_commands = [
-        'client_id'   => 'batchClient',
+        'client_id' => 'batchClient',
         'language_id' => 'batchLanguage',
     ];
+
+    protected $uploadFolder = JPATH_ADMINISTRATOR . '/components/com_passepartout/uploads/';
+
 
     /**
      * Data cleanup after batch copying data
@@ -85,10 +89,10 @@ class DocumentModel extends AdminModel
     protected function cleanupPostBatchCopy(TableInterface $table, $newId, $oldId)
     {
         // Initialise clicks and impmade
-        $db    = $this->getDatabase();
+        $db = $this->getDatabase();
 
         $query = $db->getQuery(true)
-            ->update($db->quoteName('#__dory_documents'))
+            ->update($db->quoteName('#__passepartout_documents'))
             ->set($db->quoteName('clicks') . ' = 0')
             ->set($db->quoteName('impmade') . ' = 0')
             ->where($db->quoteName('id') . ' = :newId')
@@ -115,7 +119,7 @@ class DocumentModel extends AdminModel
         // Set the variables
         $user = $this->getCurrentUser();
 
-        /** @var \GiovanniMansillo\Component\Dory\Administrator\Table\DocumentTable $table */
+        /** @var \GiovanniMansillo\Component\Passepartout\Administrator\Table\DocumentTable $table */
         $table = $this->getTable();
 
         foreach ($pks as $pk) {
@@ -158,7 +162,7 @@ class DocumentModel extends AdminModel
         }
 
         if (!empty($record->catid)) {
-            return $this->getCurrentUser()->authorise('core.delete', 'com_dory.category.' . (int) $record->catid);
+            return $this->getCurrentUser()->authorise('core.delete', 'com_passepartout.category.' . (int) $record->catid);
         }
 
         return parent::canDelete($record);
@@ -178,8 +182,8 @@ class DocumentModel extends AdminModel
     public function generateTitle($categoryId, $table)
     {
         // Alter the title & alias
-        $data         = $this->generateNewTitle($categoryId, $table->alias, $table->name);
-        $table->name  = $data['0'];
+        $data = $this->generateNewTitle($categoryId, $table->alias, $table->name);
+        $table->name = $data['0'];
         $table->alias = $data['1'];
     }
 
@@ -196,7 +200,7 @@ class DocumentModel extends AdminModel
     {
         // Check against the category.
         if (!empty($record->catid)) {
-            return $this->getCurrentUser()->authorise('core.edit.state', 'com_dory.category.' . (int) $record->catid);
+            return $this->getCurrentUser()->authorise('core.edit.state', 'com_passepartout.category.' . (int) $record->catid);
         }
 
         // Default to component settings if category not known.
@@ -216,7 +220,7 @@ class DocumentModel extends AdminModel
     public function getForm($data = [], $loadData = true)
     {
         // Get the form.
-        $form = $this->loadForm('com_dory.document', 'document', ['control' => 'jform', 'load_data' => $loadData]); //  instructs the method to look for the document.xml file inside the forms folder of the backend
+        $form = $this->loadForm('com_passepartout.document', 'document', ['control' => 'jform', 'load_data' => $loadData]); //  instructs the method to look for the document.xml file inside the forms folder of the backend
 
         if (empty($form)) {
             return false;
@@ -243,12 +247,12 @@ class DocumentModel extends AdminModel
             $form->setFieldAttribute('created_by', 'filter', 'unset');
         }
 
-        $app        =   Factory::getApplication();
-        $id         =   $app->input->get('id', null, 'int');
+        $app = Factory::getApplication();
+        $id = $app->input->get('id', null, 'int');
 
         if (isset($id) && $id > 0) {
             $form->setFieldAttribute('file_upload', 'required', 'false');
-            $form->setFieldAttribute('file_upload', 'label', 'COM_DORY_FIELD_FILE_REPLACE_LABEL');
+            $form->setFieldAttribute('file_upload', 'label', 'COM_PASSEPARTOUT_FIELD_FILE_REPLACE_LABEL');
         }
 
         return $form;
@@ -264,27 +268,27 @@ class DocumentModel extends AdminModel
     protected function loadFormData()
     {
         // Check the session for previously entered form data.
-        $app  = Factory::getApplication();
-        $data = $app->getUserState('com_dory.edit.document.data', []);
+        $app = Factory::getApplication();
+        $data = $app->getUserState('com_passepartout.edit.document.data', []);
 
         if (empty($data)) {
             $data = $this->getItem();
 
-            if ($data->get('file_size')) {
-                $file_size = HTMLHelper::_('number.bytes', Utility::getMaxUploadSize($data->get('file_size') . 'MB'));
-                $data->set('file_size', $file_size); // Don't worry about replacing the value since it never will be written on the DB
-            }
+            //if ($data->get('file_size')) {
+            //    $file_size = HTMLHelper::_('number.bytes', Utility::getMaxUploadSize($data->get('file_size') . 'MB'));
+            //    $data->set('file_size', $file_size); // Don't worry about replacing the value since it never will be written on the DB
+            //}
 
             // Prime some default values.
             if ($this->getState('document.id') == 0) {
-                $filters     = (array) $app->getUserState('com_dory.documents.filter');
+                $filters = (array) $app->getUserState('com_passepartout.documents.filter');
                 $filterCatId = $filters['category_id'] ?? null;
 
                 $data->set('catid', $app->getInput()->getInt('catid', $filterCatId));
             }
         }
 
-        $this->preprocessData('com_dory.document', $data);
+        $this->preprocessData('com_passepartout.document', $data);
 
         return $data;
     }
@@ -324,15 +328,15 @@ class DocumentModel extends AdminModel
 
         if (empty($table->id)) {
             // Set the values
-            $table->created    = $date->toSql();
+            $table->created = $date->toSql();
             $table->created_by = $user->id;
 
             // Set ordering to the last item if not set
             if (empty($table->ordering)) {
-                $db    = $this->getDatabase();
+                $db = $this->getDatabase();
                 $query = $db->getQuery(true)
                     ->select('MAX(' . $db->quoteName('ordering') . ')')
-                    ->from($db->quoteName('#__dory_documents'));
+                    ->from($db->quoteName('#__passepartout_documents'));
 
                 $db->setQuery($query);
                 $max = $db->loadResult();
@@ -341,7 +345,7 @@ class DocumentModel extends AdminModel
             }
         } else {
             // Set the values
-            $table->modified    = $date->toSql();
+            $table->modified = $date->toSql();
             $table->modified_by = $user->id;
         }
 
@@ -389,7 +393,7 @@ class DocumentModel extends AdminModel
         foreach ($pks as $pk) {
             if ($table->load($pk)) {
                 try {
-                    File::delete($table->file_path);
+                    File::delete($this->uploadFolder . $table->id . '-' . $table->file_uniqid);
                 } catch (\RuntimeException $e) {
                     $app->enqueueMessage($e->getMessage(), 'warning');
                 }
@@ -410,30 +414,36 @@ class DocumentModel extends AdminModel
      */
     public function save($data)
     {
+        //@TODO: fix same alias error
+        //@TODO: fix file data loss when in case of alias error (or other validation errors)
+        //@TODO: Table::getInstance is deprecated. Replace it as soon as possible
+
         $app = Factory::getApplication();
         $input = $app->getInput();
         $table = Table::getInstance('DocumentTable');
         $files = $input->files->get('jform');
-        $params  = ComponentHelper::getParams('com_dory');
+        $params = ComponentHelper::getParams('com_passepartout');
 
         // Create new category, if needed.
         $createCategory = true;
 
         // If category ID is provided, check if it's valid.
-        if (is_numeric($data['catid']) && $data['catid']) {
-            $createCategory = !CategoriesHelper::validateCategoryId($data['catid'], 'com_dory');
+        if ($data['catid'] && is_numeric($data['catid'])) {
+            $createCategory = !CategoriesHelper::validateCategoryId($data['catid'], 'com_passepartout');
         }
 
-        // Save New Category
+        // Save new category
         if ($createCategory && $this->canCreateCategory()) {
             $category = [
                 // Remove #new# prefix, if exists.
-                'title'     => strpos($data['catid'], '#new#') === 0 ? substr($data['catid'], 5) : $data['catid'],
+                'title' => strpos($data['catid'], '#new#') === 0 ? substr($data['catid'], 5) : $data['catid'],
                 'parent_id' => 1,
-                'extension' => 'com_dory',
-                'language'  => $data['language'],
+                'extension' => 'com_passepartout',
+                'language' => $data['language'],
                 'published' => 1,
             ];
+
+            //@TODO: default category name is a number but it should be a string
 
             /** @var \Joomla\Component\Categories\Administrator\Model\CategoryModel $categoryModel */
             $categoryModel = Factory::getApplication()->bootComponent('com_categories')
@@ -452,14 +462,14 @@ class DocumentModel extends AdminModel
 
         // Alter the name for save as copy
         if ($input->get('task') == 'save2copy') {
-            /** @var \GiovanniMansillo\Component\Dory\Administrator\Table\DocumentTable $origTable */
+            /** @var \GiovanniMansillo\Component\Passepartout\Administrator\Table\DocumentTable $origTable */
             $origTable = clone $this->getTable();
             $origTable->load($input->getInt('id'));
 
             if ($data['name'] == $origTable->name) {
                 list($name, $alias) = $this->generateNewTitle($data['catid'], $data['alias'], $data['name']);
-                $data['name']       = $name;
-                $data['alias']      = $alias;
+                $data['name'] = $name;
+                $data['alias'] = $alias;
             } else {
                 if ($data['alias'] == $origTable->alias) {
                     $data['alias'] = '';
@@ -470,11 +480,11 @@ class DocumentModel extends AdminModel
         }
 
         if ($input->get('task') == 'save2copy' || $input->get('task') == 'copy') {
-            $data['clicks']  = 0;
+            $data['clicks'] = 0;
             $data['impmade'] = 0;
         }
 
-        // File
+        // File management
         $file = $files['file_upload'];
         if (isset($file['size']) && $file['size'] > 0) {
 
@@ -482,7 +492,7 @@ class DocumentModel extends AdminModel
             if ($file['size'] > Utility::getMaxUploadSize()) {
 
                 // @TODO: localize error message
-                $error_message = 'File extension ".' . $extension . '" not admitted';
+                $error_message = 'File size exceeded maximum limit of ".' . Utility::getMaxUploadSize();
                 $app->enqueueMessage($error_message, 'error');
 
                 return false;
@@ -503,8 +513,6 @@ class DocumentModel extends AdminModel
 
             // @TODO: Check max_upload_filesize and warn user - ()
 
-
-
             if (isset($file['error']) && !empty($file['error'])) {
                 $app->enqueueMessage($file['error'], 'warning');
                 return false;
@@ -517,26 +525,27 @@ class DocumentModel extends AdminModel
                 return false;
             }
 
+            $filePath = $this->uploadFolder . $data['id'] . '-' . $file['name'];
+
             // Delete previous file
-            if ($data['file']) {
-                $fileData = json_decode($data['file'], false);
-                if (!File::delete($fileData->path))
-                    // @TODO:  localize warning message
-                    $app->enqueueMessage("Unable to delete previous file. Remove it manually from " . $data["file_path"], 'warning');
+            if (is_file($filePath) && !File::delete($filePath)) {
+                // @TODO:  localize warning message
+                // @TODO:  seems that it's never thrown. Instead an exception is thrown
+                $app->enqueueMessage("Unable to delete previous file. Remove it manually from " . $filePath, 'warning');
             }
 
             // File upload
-            $dest = JPATH_ADMINISTRATOR . '/components/com_dory/uploads/' . uniqid(random_int(1000, 9999), true);
-            if (!File::upload($file["tmp_name"], $dest)) {
+            $data['file'] = json_encode((object) [
+                'name' => File::makeSafe($file['name']),
+                'size' => $file['size'],
+                'md5' => md5_file($file["tmp_name"])
+            ]);
+
+            if (!File::upload($file["tmp_name"], $filePath)) {
                 // @TODO: localize error message
-                $app->enqueueMessage("Error encountered uploading " . $file['tmp_name'], 'warning');
+                $app->enqueueMessage("Error encountered moving " . $file['tmp_name'] . " into " . $filePath, 'error');
                 return false;
             }
-
-            $data["file_name"] = File::makeSafe($file['name']);
-            $data["file_path"] = $dest;
-            $data["file_size"] = $file['size'];
-            $data["file_md5"] = md5_file($dest);
         }
 
         return parent::save($data);
@@ -551,6 +560,6 @@ class DocumentModel extends AdminModel
      */
     private function canCreateCategory()
     {
-        return $this->getCurrentUser()->authorise('core.create', 'com_dory');
+        return $this->getCurrentUser()->authorise('core.create', 'com_passepartout');
     }
 }

@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @package     GiovanniMansillo.Dory
- * @subpackage  com_dory
+ * @package     GiovanniMansillo.Passepartout
+ * @subpackage  com_passepartout
  *
  * @copyright   2024 Giovanni Mansillo <https://www.gmansillo.it>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace GiovanniMansillo\Component\Dory\Administrator\Table;
+namespace GiovanniMansillo\Component\Passepartout\Administrator\Table;
 
 use Joomla\CMS\Application\ApplicationHelper;
 use Joomla\CMS\Component\ComponentHelper;
@@ -50,9 +50,9 @@ class DocumentTable extends Table implements VersionableTableInterface
      */
     public function __construct(DatabaseDriver $db, DispatcherInterface $dispatcher = null)
     {
-        $this->typeAlias = 'com_dory.document';
+        $this->typeAlias = 'com_passepartout.document';
 
-        parent::__construct('#__dory_documents', 'id', $db, $dispatcher);
+        parent::__construct('#__passepartout_documents', 'id', $db, $dispatcher);
 
         $this->created = Factory::getDate()->toSql();
         $this->setColumnAlias('published', 'state');
@@ -67,7 +67,7 @@ class DocumentTable extends Table implements VersionableTableInterface
     {
         $id    = (int) $this->id;
         $query = $this->_db->getQuery(true)
-            ->update($this->_db->quoteName('#__dory_documents'))
+            ->update($this->_db->quoteName('#__passepartout_documents'))
             ->set($this->_db->quoteName('clicks') . ' = ' . $this->_db->quoteName('clicks') . ' + 1')
             ->where($this->_db->quoteName('id') . ' = :id')
             ->bind(':id', $id, ParameterType::INTEGER);
@@ -174,13 +174,13 @@ class DocumentTable extends Table implements VersionableTableInterface
             $registry = new Registry($array['params']);
 
             if ((int) $registry->get('width', 0) < 0) {
-                $this->setError(Text::sprintf('JLIB_DATABASE_ERROR_NEGATIVE_NOT_PERMITTED', Text::_('COM_DORY_FIELD_WIDTH_LABEL')));
+                $this->setError(Text::sprintf('JLIB_DATABASE_ERROR_NEGATIVE_NOT_PERMITTED', Text::_('COM_PASSEPARTOUT_FIELD_WIDTH_LABEL')));
 
                 return false;
             }
 
             if ((int) $registry->get('height', 0) < 0) {
-                $this->setError(Text::sprintf('JLIB_DATABASE_ERROR_NEGATIVE_NOT_PERMITTED', Text::_('COM_DORY_FIELD_HEIGHT_LABEL')));
+                $this->setError(Text::sprintf('JLIB_DATABASE_ERROR_NEGATIVE_NOT_PERMITTED', Text::_('COM_PASSEPARTOUT_FIELD_HEIGHT_LABEL')));
 
                 return false;
             }
@@ -224,7 +224,7 @@ class DocumentTable extends Table implements VersionableTableInterface
             }
 
             if ($purchaseType < 0) {
-                $purchaseType = ComponentHelper::getParams('com_dory')->get('purchase_type');
+                $purchaseType = ComponentHelper::getParams('com_passepartout')->get('purchase_type');
             }
 
             switch ($purchaseType) {
@@ -263,7 +263,7 @@ class DocumentTable extends Table implements VersionableTableInterface
             $table = new self($db, $this->getDispatcher());
 
             if ($table->load(['alias' => $this->alias, 'catid' => $this->catid]) && ($table->id != $this->id || $this->id == 0)) {
-                $this->setError(Text::_('COM_DORY_ERROR_UNIQUE_ALIAS'));
+                $this->setError(Text::_('COM_PASSEPARTOUT_ERROR_UNIQUE_ALIAS'));
 
                 return false;
             }

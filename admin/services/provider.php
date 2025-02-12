@@ -12,7 +12,7 @@ use Joomla\CMS\Extension\Service\Provider\MVCFactory;
 use Joomla\CMS\Extension\Service\Provider\RouterFactory;
 use Joomla\CMS\HTML\Registry;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use GiovanniMansillo\Component\Dory\Administrator\Extension\DoryComponent;
+use GiovanniMansillo\Component\Passepartout\Administrator\Extension\PassepartoutComponent;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
 
@@ -33,16 +33,16 @@ return new class () implements ServiceProviderInterface {
      */
     public function register(Container $container)
     {
-        $container->registerServiceProvider(new CategoryFactory('\\GiovanniMansillo\\Component\\Dory'));
-        $container->registerServiceProvider(new MVCFactory('\\GiovanniMansillo\\Component\\Dory'));
-        $container->registerServiceProvider(new ComponentDispatcherFactory('\\GiovanniMansillo\\Component\\Dory'));
-        $container->registerServiceProvider(new RouterFactory('\\GiovanniMansillo\\Component\\Dory'));
+        $container->registerServiceProvider(new CategoryFactory('\\GiovanniMansillo\\Component\\Passepartout'));
+        $container->registerServiceProvider(new MVCFactory('\\GiovanniMansillo\\Component\\Passepartout'));
+        $container->registerServiceProvider(new ComponentDispatcherFactory('\\GiovanniMansillo\\Component\\Passepartout'));
+        $container->registerServiceProvider(new RouterFactory('\\GiovanniMansillo\\Component\\Passepartout'));
 
         # start to register the services the component is about to use
         $container->set(
             ComponentInterface::class,
             function (Container $container) {
-                $component = new DoryComponent($container->get(ComponentDispatcherFactoryInterface::class));
+                $component = new PassepartoutComponent($container->get(ComponentDispatcherFactoryInterface::class));
 
                 $component->setRegistry($container->get(Registry::class));
                 $component->setMVCFactory($container->get(MVCFactoryInterface::class));

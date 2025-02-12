@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @package     GiovanniMansillo.Dory
- * @subpackage  com_dory
+ * @package     GiovanniMansillo.Passepartout
+ * @subpackage  com_passepartout
  *
  * @copyright   2024 Giovanni Mansillo <https://www.gmansillo.it>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace GiovanniMansillo\Component\Dory\Administrator\View\Documents;
+namespace GiovanniMansillo\Component\Passepartout\Administrator\View\Documents;
 
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Helper\ContentHelper;
@@ -20,7 +20,7 @@ use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Toolbar\Button\DropdownButton;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use GiovanniMansillo\Component\Dory\Administrator\Model\DocumentsModel;
+use GiovanniMansillo\Component\Passepartout\Administrator\Model\DocumentsModel;
 use Joomla\Registry\Registry;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -140,13 +140,13 @@ class HtmlView extends BaseHtmlView
      */
     protected function addToolbar(): void
     {
-        $canDo   = ContentHelper::getActions('com_dory', 'category', $this->state->get('filter.category_id'));
+        $canDo   = ContentHelper::getActions('com_passepartout', 'category', $this->state->get('filter.category_id'));
         $user    = $this->getCurrentUser();
         $toolbar = Toolbar::getInstance();
 
-        ToolbarHelper::title(Text::_('COM_DORY_MANAGER_DOCUMENTS'), 'bookmark file');
+        ToolbarHelper::title(Text::_('COM_PASSEPARTOUT_MANAGER_DOCUMENTS'), 'bookmark file');
 
-        if ($canDo->get('core.create') || \count($user->getAuthorisedCategories('com_dory', 'core.create')) > 0) {
+        if ($canDo->get('core.create') || \count($user->getAuthorisedCategories('com_passepartout', 'core.create')) > 0) {
             $toolbar->addNew('document.add');
         }
 
@@ -190,13 +190,13 @@ class HtmlView extends BaseHtmlView
 
             // // Add a batch button
             // if (
-            //     $user->authorise('core.create', 'com_dory')
-            //     && $user->authorise('core.edit', 'com_dory')
-            //     && $user->authorise('core.edit.state', 'com_dory')
+            //     $user->authorise('core.create', 'com_passepartout')
+            //     && $user->authorise('core.edit', 'com_passepartout')
+            //     && $user->authorise('core.edit.state', 'com_passepartout')
             // ) {
             //     $childBar->popupButton('batch', 'JTOOLBAR_BATCH')
             //         ->popupType('inline')
-            //         ->textHeader(Text::_('COM_DORY_BATCH_OPTIONS'))
+            //         ->textHeader(Text::_('COM_PASSEPARTOUT_BATCH_OPTIONS'))
             //         ->url('#joomla-dialog-batch')
             //         ->modalWidth('800px')
             //         ->modalHeight('fit-content')
@@ -204,8 +204,8 @@ class HtmlView extends BaseHtmlView
             // }
         }
 
-        if ($user->authorise('core.admin', 'com_dory') || $user->authorise('core.options', 'com_dory')) {
-            $toolbar->preferences('com_dory');
+        if ($user->authorise('core.admin', 'com_passepartout') || $user->authorise('core.options', 'com_passepartout')) {
+            $toolbar->preferences('com_passepartout');
         }
     }
 }

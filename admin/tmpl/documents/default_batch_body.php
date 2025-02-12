@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @package     GiovanniMansillo.Dory
- * @subpackage  com_dory
+ * @package     GiovanniMansillo.Passepartout
+ * @subpackage  com_passepartout
  *
  * @copyright   2024 Giovanni Mansillo <https://www.gmansillo.it>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -14,7 +14,7 @@ use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 
-/** @var \GiovanniMansillo\Component\Dory\Administrator\View\Documents\HtmlView $this */
+/** @var \GiovanniMansillo\Component\Passepartout\Administrator\View\Documents\HtmlView $this */
 
 $published = (int) $this->state->get('filter.published');
 ?>
@@ -33,7 +33,7 @@ $published = (int) $this->state->get('filter.published');
         <?php if ($published >= 0) : ?>
             <div class="form-group col-md-6">
                 <div class="controls">
-                    <?php echo LayoutHelper::render('joomla.html.batch.item', ['extension' => 'com_dory']); ?>
+                    <?php echo LayoutHelper::render('joomla.html.batch.item', ['extension' => 'com_passepartout']); ?>
                 </div>
             </div>
         <?php endif; ?>

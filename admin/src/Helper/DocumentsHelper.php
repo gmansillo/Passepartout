@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @package     GiovanniMansillo.Dory
- * @subpackage  com_dory
+ * @package     GiovanniMansillo.Passepartout
+ * @subpackage  com_passepartout
  *
  * @copyright   2024 Giovanni Mansillo <https://www.gmansillo.it>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace GiovanniMansillo\Component\Dory\Administrator\Helper;
+namespace GiovanniMansillo\Component\Passepartout\Administrator\Helper;
 
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
@@ -37,14 +37,14 @@ class DocumentsHelper extends ContentHelper
      */
     public static function updateReset()
     {
-        $db      = Factory::getDbo();
+        $db = Factory::getDbo();
         $nowDate = Factory::getDate()->toSql();
-        $app     = Factory::getApplication();
-        $user    = $app->getIdentity();
+        $app = Factory::getApplication();
+        $user = $app->getIdentity();
 
         $query = $db->getQuery(true)
             ->select('*')
-            ->from($db->quoteName('#__dory_documents'))
+            ->from($db->quoteName('#__passepartout_documents'))
             ->where(
                 [
                     $db->quoteName('reset') . ' <= :date',
@@ -76,14 +76,14 @@ class DocumentsHelper extends ContentHelper
             $purchaseType = $row->purchase_type;
 
             if ($purchaseType < 0 && $row->cid) {
-                /** @var \GiovanniMansillo\Component\Dory\Administrator\Table\ClientTable $client */
-                $client = Table::getInstance('ClientTable', '\\GiovanniMansillo\\Component\\Dory\\Administrator\\Table\\');
+                /** @var \GiovanniMansillo\Component\Passepartout\Administrator\Table\ClientTable $client */
+                $client = Table::getInstance('ClientTable', '\\GiovanniMansillo\\Component\\Passepartout\\Administrator\\Table\\');
                 $client->load($row->cid);
                 $purchaseType = $client->purchase_type;
             }
 
             if ($purchaseType < 0) {
-                $params       = ComponentHelper::getParams('com_dory');
+                $params = ComponentHelper::getParams('com_passepartout');
                 $purchaseType = $params->get('purchase_type');
             }
 
@@ -92,26 +92,26 @@ class DocumentsHelper extends ContentHelper
                     $reset = null;
                     break;
                 case 2:
-                    $date  = Factory::getDate('+1 year ' . date('Y-m-d'));
+                    $date = Factory::getDate('+1 year ' . date('Y-m-d'));
                     $reset = $date->toSql();
                     break;
                 case 3:
-                    $date  = Factory::getDate('+1 month ' . date('Y-m-d'));
+                    $date = Factory::getDate('+1 month ' . date('Y-m-d'));
                     $reset = $date->toSql();
                     break;
                 case 4:
-                    $date  = Factory::getDate('+7 day ' . date('Y-m-d'));
+                    $date = Factory::getDate('+7 day ' . date('Y-m-d'));
                     $reset = $date->toSql();
                     break;
                 case 5:
-                    $date  = Factory::getDate('+1 day ' . date('Y-m-d'));
+                    $date = Factory::getDate('+1 day ' . date('Y-m-d'));
                     $reset = $date->toSql();
                     break;
             }
 
             // Update the row ordering field.
             $query = $db->getQuery(true)
-                ->update($db->quoteName('#__dory_documents'))
+                ->update($db->quoteName('#__passepartout_documents'))
                 ->set(
                     [
                         $db->quoteName('reset') . ' = :reset',
@@ -137,12 +137,7 @@ class DocumentsHelper extends ContentHelper
         return true;
     }
 
-    public static function getAccessLevels()
+    public static function getUploadPath()
     {
-        return [
-            1 => Text::_('COM_DORY_FIELD_ACCESS_OPTION_PUBLIC_VALUE'),
-            2 => Text::_('COM_DORY_FIELD_ACCESS_OPTION_USERS_VALUE'),
-            3 => Text::_('COM_DORY_FIELD_ACCESS_OPTION_USERGROUPS_VALUE'),
-        ];
     }
 }

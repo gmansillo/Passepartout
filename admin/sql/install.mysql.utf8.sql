@@ -1,8 +1,8 @@
 --
--- Table structure for table `#__dory_documents` 
+-- Table structure for table `#__passepartout_documents` 
 --
 
-CREATE TABLE IF NOT EXISTS `#__dory_documents` (
+CREATE TABLE IF NOT EXISTS `#__passepartout_documents` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
   `alias` varchar(400) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
@@ -23,13 +23,10 @@ CREATE TABLE IF NOT EXISTS `#__dory_documents` (
   `modified` datetime NOT NULL,
   `modified_by` int unsigned NOT NULL DEFAULT 0,
   `version` int unsigned NOT NULL DEFAULT 1,
-	`access_level` INT NOT NULL,
-	`access_users` VARCHAR(255),
-	`access_usergroups` VARCHAR(255),
-	`file_name` VARCHAR(255) NOT NULL,
-	`file_path` VARCHAR(255) NOT NULL,
-	`file_md5` VARCHAR(32) NOT NULL,
-	`file_size` INT NOT NULL,
+  `access_level` INT NOT NULL,
+  `access_users` VARCHAR(255),
+  `access_usergroups` VARCHAR(255),
+  `file` JSON NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_state` (`state`),
   KEY `idx_document_catid` (`catid`),

@@ -1,6 +1,6 @@
 <?php
 
-namespace GiovanniMansillo\Component\Dory\Site\View\Document;
+namespace GiovanniMansillo\Component\Passepartout\Site\View\Document;
 
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Factory;
@@ -46,10 +46,10 @@ class RawView extends BaseHtmlView
         $app = Factory::getApplication();
         $app->setHeader(
             'Content-disposition',
-            'attachment; filename="' . $item->file_name . '"; creation-date="' . Factory::getDate()->toRFC822() . '"',
+            'attachment; filename="' . basename($item->file_name) . '"; creation-date="' . Factory::getDate()->toRFC822() . '"',
             true
         );
 
-        echo file_get_contents($item->file_path);
+        echo file_get_contents($item->file_name);
     }
 }

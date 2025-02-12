@@ -1,6 +1,6 @@
 <?php
 
-namespace GiovanniMansillo\Component\Dory\Site\Controller;
+namespace GiovanniMansillo\Component\Passepartout\Site\Controller;
 
 defined('_JEXEC') or die;
 

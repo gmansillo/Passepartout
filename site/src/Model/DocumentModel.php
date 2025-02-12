@@ -1,6 +1,6 @@
 <?php
 
-namespace GiovanniMansillo\Component\Dory\Site\Model;
+namespace GiovanniMansillo\Component\Passepartout\Site\Model;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
@@ -32,7 +32,7 @@ class DocumentModel extends BaseDatabaseModel
         $db = $this->getDatabase();
         $query = $db->getQuery(true);
         $query->select('*')
-            ->from($db->quoteName('#__dory_documents', 'a'))
+            ->from($db->quoteName('#__passepartout_documents', 'a'))
             ->where($db->quoteName('a.id') . ' = ' . (int) $id);
         $db->setQuery($query);
         $item = $db->loadObject();

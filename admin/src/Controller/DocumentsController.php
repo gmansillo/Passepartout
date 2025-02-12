@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @package     GiovanniMansillo.Dory
- * @subpackage  com_dory
+ * @package     GiovanniMansillo.Passepartout
+ * @subpackage  com_passepartout
  *
  * @copyright   2024 Giovanni Mansillo <https://www.gmansillo.it>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace GiovanniMansillo\Component\Dory\Administrator\Controller;
+namespace GiovanniMansillo\Component\Passepartout\Administrator\Controller;
 
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Language\Text;
@@ -35,7 +35,7 @@ class DocumentsController extends AdminController
      * @var    string
      * @since  1.6
      */
-    protected $text_prefix = 'COM_DORY_DOCUMENTS';
+    protected $text_prefix = 'COM_PASSEPARTOUT_DOCUMENTS';
 
     /**
      * Constructor.
@@ -91,10 +91,10 @@ class DocumentsController extends AdminController
         $ids = array_filter($ids);
 
         if (empty($ids)) {
-            $this->app->enqueueMessage(Text::_('COM_DORY_NO_DOCUMENTS_SELECTED'), 'warning');
+            $this->app->enqueueMessage(Text::_('COM_PASSEPARTOUT_NO_DOCUMENTS_SELECTED'), 'warning');
         } else {
             // Get the model.
-            /** @var \GiovanniMansillo\Component\Dory\Administrator\Model\DocumentModel $model */
+            /** @var \GiovanniMansillo\Component\Passepartout\Administrator\Model\DocumentModel $model */
             $model = $this->getModel();
 
             // Change the state of the records.
@@ -102,16 +102,16 @@ class DocumentsController extends AdminController
                 $this->app->enqueueMessage($model->getError(), 'warning');
             } else {
                 if ($value == 1) {
-                    $ntext = 'COM_DORY_N_DOCUMENTS_STUCK';
+                    $ntext = 'COM_PASSEPARTOUT_N_DOCUMENTS_STUCK';
                 } else {
-                    $ntext = 'COM_DORY_N_DOCUMENTS_UNSTUCK';
+                    $ntext = 'COM_PASSEPARTOUT_N_DOCUMENTS_UNSTUCK';
                 }
 
                 $this->setMessage(Text::plural($ntext, \count($ids)));
             }
         }
 
-        $this->setRedirect('index.php?option=com_dory&view=documents');
+        $this->setRedirect('index.php?option=com_passepartout&view=documents');
     }
 
     /**
@@ -132,8 +132,8 @@ class DocumentsController extends AdminController
         $result = [];
 
         $result['amount'] = $amount;
-        $result['sronly'] = Text::plural('COM_DORY_N_QUICKICON_SRONLY', $amount);
-        $result['name']   = Text::plural('COM_DORY_N_QUICKICON', $amount);
+        $result['sronly'] = Text::plural('COM_PASSEPARTOUT_N_QUICKICON_SRONLY', $amount);
+        $result['name']   = Text::plural('COM_PASSEPARTOUT_N_QUICKICON', $amount);
 
         echo new JsonResponse($result);
     }

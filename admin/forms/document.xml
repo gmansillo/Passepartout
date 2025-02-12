@@ -1,133 +1,106 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form>
-    <namespace path="src">GiovanniMansillo\Component\Dory</namespace>
+	<namespace path="src">GiovanniMansillo\Component\Passepartout</namespace>
 
-    <fieldset name="title_alias">
-        <field
+	<fieldset name="title_alias">
+		<field
             name="name"
             type="text"
             label="JGLOBAL_TITLE"
             required="true"
         />
 
-        <field
+		<field
             name="alias"
             type="text"
             label="JFIELD_ALIAS_LABEL"
             description="JFIELD_ALIAS_DESC"
             hint="JFIELD_ALIAS_PLACEHOLDER"
         />
-    </fieldset>
+	</fieldset>
 
-    <field
+	<field
         name="description"
         type="editor"
         label="JGLOBAL_DESCRIPTION"
-        required="false"
     />
 
-    <field
+	<field
         name="state"
         type="list"
         label="JSTATUS"
-        default="1"
-        required="required"
         class="form-select-color-state"
         validate="options"
+        default="1"
     >
-        <option value="1">JPUBLISHED</option>
-        <option value="0">JUNPUBLISHED</option>
-        <option value="2">JARCHIVED</option>
-        <option value="-2">JTRASHED</option>
-    </field>
+		<option value="1">JPUBLISHED</option>
+		<option value="0">JUNPUBLISHED</option>
+		<option value="2">JARCHIVED</option>
+		<option value="-2">JTRASHED</option>
+	</field>
 
-    <fieldset name="file">
-
-        <field
-            addfieldprefix="GiovanniMansillo\Component\Dory\Administrator\Field"
-            name="file_name"
-            type="uploadedfile"
-            label="COM_DORY_FIELD_FILE_NAME_LABEL"
-            readonly="true"
-            showon="id!:[AND]id!:0"
+	<field
+		name="file"
+		label="COM_PASSEPARTOUT_FIELD_FILE_LABEL"
+		addfieldprefix="GiovanniMansillo\Component\Passepartout\Administrator\Field"
+		type="uploadedfile"
+		showon="id!:[AND]id!:0"
         />
-
-        <field
-            name="file_path"
-            type="text"
-            label="COM_DORY_FIELD_FILE_PATH_LABEL"
-            readonly="true"
-            disabled="disabled"
-        />
-
-        <field
-            name="file_size"
-            type="text"
-            label="COM_DORY_FIELD_FILE_SIZE_LABEL"
-            readonly="true"
-            disabled="disabled"
-        />
-
-        <field
-            name="file_md5"
-            type="text"
-            label="COM_DORY_FIELD_FILE_MD5_LABEL"
-            readonly="true"
-            disabled="disabled"
-        />
-    </fieldset>
-
-    <field
-        addfieldprefix="GiovanniMansillo\Component\Dory\Administrator\Field"
+		
+	<field
+        addfieldprefix="GiovanniMansillo\Component\Passepartout\Administrator\Field"
         name="file_upload"
         type="enhancedfile"
-        label="COM_DORY_FIELD_FILE_UPLOAD_LABEL"
+        label="COM_PASSEPARTOUT_FIELD_FILE_UPLOAD_LABEL"
         required="required"
     />
 
-    <field
+	<field
         name="language"
         type="contentlanguage"
         label="JGRID_HEADING_LANGUAGE"
         filtermode="selector"
         class="js-select-submit-on-change"
     >
-        <option value="*">JALL</option>
-    </field>
+		<option value="*">JALL</option>
+	</field>
 
-    <field
+	<field
         name="catid"
-        extension="com_dory"
+        extension="com_passepartout"
         label="JCATEGORY"
-        required="true"
         type="categoryedit"
         addfieldprefix="Joomla\Component\Categories\Administrator\Field"
         default=""
+		required="required"
         class="advancedSelect"
     />
 
-    <fieldset name="accessrules">
-        <field
+	<fieldset name="accessrules">
+		<field
             name="access_level"
             type="list"
-            label="COM_DORY_FIELD_ACCESS_LEVEL_LABEL"
+            label="COM_PASSEPARTOUT_FIELD_ACCESS_LEVEL_LABEL"
             filter="integer"
             validate="options"
             default="1"
         >
-            <option value="1">COM_DORY_FIELD_ACCESS_OPTION_PUBLIC_VALUE</option>
-            <option value="2">COM_DORY_FIELD_ACCESS_OPTION_USERS_VALUE</option>
-            <option value="3">COM_DORY_FIELD_ACCESS_OPTION_USERGROUPS_VALUE</option>
-        </field>
+			<option value="1">COM_PASSEPARTOUT_FIELD_ACCESS_LEVEL_OPTION_VALUE_1</option>
+			<!-- Public -->
+			<option value="2">COM_PASSEPARTOUT_FIELD_ACCESS_LEVEL_OPTION_VALUE_2</option>
+			<!-- Selected users -->
+			<option value="3">COM_PASSEPARTOUT_FIELD_ACCESS_LEVEL_OPTION_VALUE_3</option>
+			<!-- Selected usergroups -->
+		</field>
 
-        <field
+		<field
             name="access_users"
             type="user"
-            label="COM_DORY_FIELD_ACCESS_USERS_LABEL"
+            label="COM_PASSEPARTOUT_FIELD_ACCESS_USERS_LABEL"
             showon="access_level:2"
         />
 
-        <field
+		<field
             name="access_usergroups"
             type="UserGroupList"
             layout="joomla.form.field.list-fancy-select"
@@ -135,19 +108,19 @@
             default=""
             multiple="1"
             showon="access_level:3"
-            label="COM_DORY_FIELD_ACCESS_USERGROUPS_LABEL"
+            label="COM_PASSEPARTOUT_FIELD_ACCESS_USERGROUPS_LABEL"
         />
-    </fieldset>
+	</fieldset>
 
-    <fieldset name="publishing">
-        <field
+	<fieldset name="publishing">
+		<field
             name="id"
             type="text"
             label="JGLOBAL_FIELD_ID_LABEL"
             readonly="true"
         />
 
-        <field
+		<field
             name="created"
             type="calendar"
             label="JGLOBAL_FIELD_CREATED_LABEL"
@@ -155,12 +128,12 @@
             showtime="true"
             filter="user_utc"
         />
-        <field
+		<field
             name="created_by"
             type="user"
             label="JGLOBAL_FIELD_CREATED_BY_LABEL"
         />
-        <field
+		<field
             name="modified"
             type="calendar"
             label="JGLOBAL_FIELD_MODIFIED_LABEL"
@@ -169,10 +142,10 @@
             filter="user_utc"
         />
 
-        <field
+		<field
             name="modified_by"
             type="user"
             label="JGLOBAL_FIELD_MODIFIED_BY_LABEL"
         />
-    </fieldset>
+	</fieldset>
 </form>

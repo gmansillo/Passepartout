@@ -1,6 +1,6 @@
 <?php
 
-namespace GiovanniMansillo\Component\Dory\Administrator\View\Document;
+namespace GiovanniMansillo\Component\Passepartout\Administrator\View\Document;
 
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Factory;
@@ -18,7 +18,7 @@ use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
  */
 class RawView extends BaseHtmlView
 {
-    
+
 
 /**
  * View to edit a document.
@@ -80,22 +80,24 @@ class HtmlView extends BaseHtmlView
         $this->form = $this->get('Form');
         $this->state = $this->get('State');
         $this->item = $this->get('Item');
-        
+
         // Check for errors.
         if (\count($errors = $this->get('Errors'))) {
             throw new GenericDataException(implode("\n", $errors), 500);
         }
 
-        $this->getDocument()->setMimeEncoding($this->item->file_mime_content_type ?? 'application/octet-stream');
+        $file_data_decoded = json_decode($this->item->file);
+
+        $this->getDocument()->setMimeEncoding('application/octet-stream');
 
         /** @var CMSApplication $app */
         $app = Factory::getApplication();
         $app->setHeader(
             'Content-disposition',
-            'attachment; filename="' . $this->item->file_name . '"; creation-date="' . Factory::getDate()->toRFC822() . '"',
+            'attachment; filename="' . $file_data_decoded->name . '"; creation-date="' . Factory::getDate()->toRFC822() . '"',
             true
         );
 
-        echo file_get_contents($this->item->file_path);
+        echo file_get_contents($file_data_decoded);
     }
 }

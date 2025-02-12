@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="component" method="upgrade">
+	<name>com_passepartout</name>
+	<author>G. Mansillo</author>
+	<creationDate>2024-08</creationDate>
+	<copyright>(C) 2024 Giovanni Mansillo</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<authorEmail>giovanni.mansillo@gmail.com</authorEmail>
+	<authorUrl>https://gmansillo.it</authorUrl>
+	<version>1.0.0</version>
+	<namespace path="src">GiovanniMansillo\Component\Passepartout</namespace>
+	<install>
+		<!-- Runs on install -->
+		<sql>
+			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+		</sql>
+	</install>
+	<uninstall>
+		<!-- Runs on uninstall -->
+		<sql>
+			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+		</sql>
+	</uninstall>
+	<files folder="site">
+		<folder>src</folder>
+	</files>
+
+	<!-- <languages folder="site">
+		<language tag="en-GB">language/en-GB.com_passepartout.ini</language>
+	</languages> -->
+	<media destination="com_passepartout" folder="media">
+		<folder>css</folder>
+		<filename>joomla.asset.json</filename>
+	</media>
+
+	<administration>
+		<menu img="class:default" line="option=com_passepartout" link="option=com_passepartout&amp;view=documents">COM_PASSEPARTOUT_MENU_BACKEND</menu>
+		<submenu>
+			<!--
+				Note that all & must be escaped to &amp; for the file to be valid
+				XML and be parsed by the installer
+			-->
+			<menu
+				link="option=com_passepartout"
+				view="documents"
+				img="class:default"
+				alt="Passepartout/Documents"
+				>
+				COM_PASSEPARTOUT_SUBMENU_DOCUMENTS
+			</menu>
+			<menu
+            	link="option=com_categories&amp;extension=com_passepartout"
+                view="categories"
+                img="class:default"
+                alt="Passepartout/Categories"
+                >
+				COM_PASSEPARTOUT_SUBMENU_CATEGORIES
+			</menu>
+		</submenu>
+		<files folder="admin">
+			<filename>access.xml</filename>
+			<filename>config.xml</filename>
+			<folder>forms</folder>
+			<folder>layouts</folder>
+			<folder>services</folder>
+			<folder>sql</folder>
+			<folder>src</folder>
+			<folder>tmpl</folder>
+			<folder>uploads</folder>
+		</files>
+		<languages folder="admin">
+			<language tag="en-GB">language/en-GB.com_passepartout.ini</language>
+			<language tag="en-GB">language/en-GB.com_passepartout.sys.ini</language>
+		</languages>
+	</administration>
+	<update>
+		<schemas>
+			<schemapath type="mysql">sql</schemapath>
+		</schemas>
+	</update>
+
+	<updateservers>
+		<server type="extension" priority="1" name="Passepartout update server">
+			http://passepartout.gmansillo.it/update
+		</server>
+	</updateservers>
+</extension>

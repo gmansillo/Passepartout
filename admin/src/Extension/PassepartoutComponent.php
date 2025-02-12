@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @package     GiovanniMansillo.Dory
- * @subpackage  com_dory
+ * @package     GiovanniMansillo.Passepartout
+ * @subpackage  com_passepartout
  *
  * @copyright   2024 Giovanni Mansillo <https://www.gmansillo.it>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace GiovanniMansillo\Component\Dory\Administrator\Extension;
+namespace GiovanniMansillo\Component\Passepartout\Administrator\Extension;
 
 use Joomla\CMS\Categories\CategoryServiceInterface;
 use Joomla\CMS\Categories\CategoryServiceTrait;
@@ -19,7 +19,7 @@ use Joomla\CMS\Extension\MVCComponent;
 use Joomla\CMS\HTML\HTMLRegistryAwareTrait;
 use Joomla\CMS\Tag\TagServiceInterface;
 use Joomla\CMS\Tag\TagServiceTrait;
-use GiovanniMansillo\Component\Dory\Administrator\Service\Html\Document;
+use GiovanniMansillo\Component\Passepartout\Administrator\Service\Html\Document;
 use Joomla\Database\DatabaseInterface;
 use Psr\Container\ContainerInterface;
 use Joomla\CMS\Helper\ContentHelper as LibraryContentHelper;
@@ -30,11 +30,11 @@ use Joomla\CMS\Helper\ContentHelper as LibraryContentHelper;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * Component class for com_dory
+ * Component class for com_passepartout
  *
  * @since  4.0.0
  */
-class DoryComponent extends MVCComponent implements
+class PassepartoutComponent extends MVCComponent implements
     BootableExtensionInterface,
     CategoryServiceInterface,
     RouterServiceInterface,
@@ -79,6 +79,6 @@ class DoryComponent extends MVCComponent implements
      */
     protected function getTableNameForSection(string $section = null)
     {
-        return 'dory_documents';
+        return 'passepartout_documents';
     }
 }
