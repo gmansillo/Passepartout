@@ -37,23 +37,45 @@ class DocumentsModel extends ListModel
     {
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = [
-                'id', 'a.id',
-                'name', 'a.name',
-                'alias', 'a.alias',
-                'state', 'a.state',
-                'ordering', 'a.ordering',
-                'language', 'a.language',
-                'catid', 'a.catid', 'category_title',
-                'description', 'a.description',
-                'checked_out', 'a.checked_out',
-                'checked_out_time', 'a.checked_out_time',
-                'created', 'a.created',
-                'downloads', 'a.downloads',
-                'publish_up', 'a.publish_up',
-                'publish_down', 'a.publish_down',
+                'id',
+                'a.id',
+                'name',
+                'a.name',
+                'alias',
+                'a.alias',
+                'state',
+                'a.state',
+                'ordering',
+                'a.ordering',
+                'language',
+                'a.language',
+                'catid',
+                'a.catid',
+                'category_title',
+                'description',
+                'a.description',
+                'checked_out',
+                'a.checked_out',
+                'checked_out_time',
+                'a.checked_out_time',
+                'created',
+                'a.created',
+                'created_by',
+                'a.created_by',
+                'author_name',
+                'ua.name',
+                'modified',
+                'a.modified',
+                'downloads',
+                'a.downloads',
+                'publish_up',
+                'a.publish_up',
+                'publish_down',
+                'a.publish_down',
                 'category_id',
                 'published',
-                'level', 'c.level',
+                'level',
+                'c.level',
             ];
         }
 
@@ -70,7 +92,7 @@ class DocumentsModel extends ListModel
     public function &getCategoryOrders()
     {
         if (!isset($this->cache['categoryorders'])) {
-            $db    = $this->getDatabase();
+            $db = $this->getDatabase();
             $query = $db->getQuery(true)
                 ->select(
                     [
@@ -96,7 +118,7 @@ class DocumentsModel extends ListModel
      */
     protected function getListQuery()
     {
-        $db    = $this->getDatabase();
+        $db = $this->getDatabase();
         $query = $db->getQuery(true);
 
         // Select the required fields from the table.
@@ -114,6 +136,9 @@ class DocumentsModel extends ListModel
                     $db->quoteName('a.state'),
                     $db->quoteName('a.ordering'),
                     $db->quoteName('a.language'),
+                    $db->quoteName('a.created'),
+                    $db->quoteName('a.created_by'),
+                    $db->quoteName('a.modified'),
                     $db->quoteName('a.publish_up'),
                     $db->quoteName('a.publish_down'),
                     $db->quoteName('a.access_level'),
@@ -125,14 +150,16 @@ class DocumentsModel extends ListModel
                     $db->quoteName('l.title', 'language_title'),
                     $db->quoteName('l.image', 'language_image'),
                     $db->quoteName('uc.name', 'editor'),
-                    $db->quoteName('c.title', 'category_title')
+                    $db->quoteName('c.title', 'category_title'),
+                    $db->quoteName('ua.name', 'author_name')
                 ]
             )
             ->from($db->quoteName('#__passepartout_documents', 'a'))
             ->join('LEFT', $db->quoteName('#__languages', 'l'), $db->quoteName('l.lang_code') . ' = ' . $db->quoteName('a.language'))
             ->join('LEFT', $db->quoteName('#__users', 'uc'), $db->quoteName('uc.id') . ' = ' . $db->quoteName('a.checked_out'))
-            ->join('LEFT', $db->quoteName('#__categories', 'c'), $db->quoteName('c.id') . ' = ' . $db->quoteName('a.catid'));
-
+            ->join('LEFT', $db->quoteName('#__categories', 'c'), $db->quoteName('c.id') . ' = ' . $db->quoteName('a.catid'))
+            ->join('LEFT', $db->quoteName('#__users', 'ua'), $db->quoteName('ua.id') . ' = ' . $db->quoteName('a.created_by'));
+        
         // Filter by published state
         $published = (string) $this->getState('filter.published');
 
@@ -188,7 +215,7 @@ class DocumentsModel extends ListModel
         }
 
         // Add the list ordering clause.
-        $orderCol  = $this->state->get('list.ordering', 'a.name');
+        $orderCol = $this->state->get('list.ordering', 'a.name');
         $orderDirn = $this->state->get('list.direction', 'ASC');
 
         if ($orderCol === 'a.ordering' || $orderCol === 'category_title') {
@@ -197,10 +224,6 @@ class DocumentsModel extends ListModel
                 $db->quoteName('a.ordering') . ' ' . $db->escape($orderDirn),
             ];
         } else {
-            if ($orderCol === 'client_name') {
-                $orderCol = 'cl.name';
-            }
-
             $ordering = $db->escape($orderCol) . ' ' . $db->escape($orderDirn);
         }
 

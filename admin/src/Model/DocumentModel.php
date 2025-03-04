@@ -562,4 +562,5 @@ class DocumentModel extends AdminModel
     {
         return $this->getCurrentUser()->authorise('core.create', 'com_passepartout');
     }
+
 }

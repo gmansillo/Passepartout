@@ -31,6 +31,16 @@ $listOrder = $this->escape($this->state->get('list.ordering'));
 $listDirn = $this->escape($this->state->get('list.direction'));
 $saveOrder = $listOrder == 'a.ordering';
 
+if (strpos($listOrder, 'publish_up') !== false) {
+    $orderingColumn = 'publish_up';
+} elseif (strpos($listOrder, 'publish_down') !== false) {
+    $orderingColumn = 'publish_down';
+} elseif (strpos($listOrder, 'modified') !== false) {
+    $orderingColumn = 'modified';
+} else {
+    $orderingColumn = 'created';
+}
+
 if ($saveOrder && !empty($this->items)) {
     $saveOrderingUrl = 'index.php?option=com_passepartout&task=documents.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1';
     HTMLHelper::_('draggablelist.draggable');
@@ -67,21 +77,27 @@ if ($saveOrder && !empty($this->items)) {
                                 <th scope="col" class="w-1 text-center">
                                     <?php echo HTMLHelper::_('searchtools.sort', 'JSTATUS', 'a.state', $listDirn, $listOrder); ?>
                                 </th>
-                                <th scope="col">
+                                <th scope="col" style="min-width:100px">
                                     <?php echo HTMLHelper::_('searchtools.sort', 'COM_PASSEPARTOUT_HEADING_NAME', 'a.name', $listDirn, $listOrder); ?>
                                 </th>
                                 <th scope="col" class="w-10 d-none d-md-table-cell">
                                     <?php echo HTMLHelper::_('searchtools.sort', 'COM_PASSEPARTOUT_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
                                 </th>
                                 <th scope="col" class="w-10 d-none d-md-table-cell">
+                                    <?php echo HTMLHelper::_('searchtools.sort', 'COM_PASSEPARTOUT_HEADING_CREATED_BY', 'author_name', $listDirn, $listOrder); ?>
+                                </th>
+                                <th scope="col" class="w-10 d-none d-md-table-cell text-center">
+                                    <?php echo HTMLHelper::_('searchtools.sort', 'COM_PASSEPARTOUT_HEADING_' . strtoupper($orderingColumn), 'a.' . $orderingColumn, $listDirn, $listOrder); ?>
+                                </th>
+                                <th scope="col" class="w-3 d-none d-md-table-cell text-center">
                                     <?php echo HTMLHelper::_('searchtools.sort', 'COM_PASSEPARTOUT_HEADING_DOWNLOADS', 'a.downloads', $listDirn, $listOrder); ?>
                                 </th>
                                 <?php if (Multilanguage::isEnabled()): ?>
-                                    <th scope="col" class="w-10 d-none d-md-table-cell">
+                                    <th scope="col" class="w-5 d-none d-md-table-cell">
                                         <?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_LANGUAGE', 'a.language', $listDirn, $listOrder); ?>
                                     </th>
                                 <?php endif; ?>
-                                <th scope="col" class="w-5 d-none d-md-table-cell">
+                                <th scope="col" class="w-3 d-none d-md-table-cell">
                                     <?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
                                 </th>
                             </tr>
@@ -145,10 +161,25 @@ if ($saveOrder && !empty($this->items)) {
                                         </div>
                                     </th>
                                     <td class="small d-none d-md-table-cell">
-                                        <span class="badge bg-primary"><?php echo Text::_('COM_PASSEPARTOUT_FIELD_ACCESS_LEVEL_OPTION_VALUE_' . $item->access_level); ?></span>
+                                        <?php echo Text::_('COM_PASSEPARTOUT_FIELD_ACCESS_LEVEL_OPTION_VALUE_' . $item->access_level); ?>
                                     </td>
-                                    <td class="d-none d-md-table-cell">
-                                        <?php echo $item->downloads; ?>
+                                    <td class="small d-none d-md-table-cell">
+                                        <?php if ((int) $item->created_by != 0): ?>
+                                            <a href="<?php echo Route::_('index.php?option=com_users&task=user.edit&id=' . (int) $item->created_by); ?>">
+                                                <?php echo $this->escape($item->author_name); ?>
+                                            </a>
+                                        <?php else: ?>
+                                            <?php echo Text::_('JNONE'); ?>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td class="small d-none d-md-table-cell text-center">
+                                        <?php
+                                        $date = $item->{$orderingColumn};
+                                        echo $date > 0 ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC4')) : '-';
+                                        ?>
+                                    </td>
+                                    <td class="d-none d-md-table-cell text-center">
+                                        <span class="badge bg-info"><?php echo $item->downloads; ?></span>
                                     </td>
                                     <?php if (Multilanguage::isEnabled()): ?>
                                         <td class="small d-none d-md-table-cell">

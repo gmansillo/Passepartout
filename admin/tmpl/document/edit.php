@@ -39,12 +39,12 @@ $wa->useScript('keepalive')
             </div>
 
             <div class="col-lg-3 ">
+                <?php echo LayoutHelper::render('joomla.edit.global', $this); ?>
+                <?php echo $this->form->renderFieldset('accessrules'); ?>
+
                 <?php echo $this->form->renderField('file'); ?>
                 <?php echo $this->form->renderField('file_upload'); ?>
 
-                <?php echo LayoutHelper::render('joomla.edit.global', $this); ?>
-
-                <?php echo $this->form->renderFieldset('accessrules'); ?>
             </div>
         </div>
 

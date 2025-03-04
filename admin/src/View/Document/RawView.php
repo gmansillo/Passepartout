@@ -12,20 +12,11 @@ use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * View class for a list of tracks.
- *
- * @since  1.6
- */
-class RawView extends BaseHtmlView
-{
-
-
-/**
- * View to edit a document.
+ * View to download document's file.
  *
  * @since  1.5
  */
-class HtmlView extends BaseHtmlView
+class RawView extends BaseHtmlView
 {
     /**
      * The Form object
@@ -88,16 +79,34 @@ class HtmlView extends BaseHtmlView
 
         $file_data_decoded = json_decode($this->item->file);
 
-        $this->getDocument()->setMimeEncoding('application/octet-stream');
+        if (!$file_data_decoded)
+            throw new GenericDataException("Invalid file data json: {$file_data_decoded}", 500); // TODO: Localize error message
 
         /** @var CMSApplication $app */
         $app = Factory::getApplication();
+
+        $filePath = JPATH_COMPONENT_ADMINISTRATOR . "/uploads/" . $this->item->id . "-" . $file_data_decoded->name;
+
+        if (!file_exists($filePath)) {
+
+            $app->enqueueMessage('ss', 'error');
+            return;
+            // TODO: raise a 404 error
+            http_response_code(404);
+
+            return;
+        }
+
+        $this->getDocument()->setMimeEncoding('application/octet-stream');
+
+
         $app->setHeader(
             'Content-disposition',
             'attachment; filename="' . $file_data_decoded->name . '"; creation-date="' . Factory::getDate()->toRFC822() . '"',
             true
         );
+        echo file_get_contents($filePath);
 
-        echo file_get_contents($file_data_decoded);
+        exit;
     }
 }

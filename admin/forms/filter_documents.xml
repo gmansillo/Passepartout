@@ -74,8 +74,20 @@
 			<option value="category_title DESC">JCATEGORY_DESC</option>
 			<option value="a.language ASC" requires="multilanguage">JGRID_HEADING_LANGUAGE_ASC</option>
 			<option value="a.language DESC" requires="multilanguage">JGRID_HEADING_LANGUAGE_DESC</option>
+			<option value="a.created ASC">COM_PASSEPARTOUT_HEADING_CREATED_ASC</option>
+			<option value="a.created DESC">COM_PASSEPARTOUT_HEADING_CREATED_DESC</option>
+			<option value="author_name ASC">COM_PASSEPARTOUT_HEADING_CREATED_BY_ASC</option>
+			<option value="author_name DESC">COM_PASSEPARTOUT_HEADING_CREATED_BY_DESC</option>
+			<option value="a.modified ASC">COM_PASSEPARTOUT_HEADING_MODIFIED_ASC</option>
+			<option value="a.modified DESC">COM_PASSEPARTOUT_HEADING_MODIFIED_DESC</option>
+			<option value="a.publish_up ASC">COM_PASSEPARTOUT_HEADING_PUBLISH_UP_ASC</option>
+			<option value="a.publish_up DESC">COM_PASSEPARTOUT_HEADING_PUBLISH_UP_DESC</option>
+			<option value="a.publish_down ASC">COM_PASSEPARTOUT_HEADING_PUBLISH_DOWN_ASC</option>
+			<option value="a.publish_down DESC">COM_PASSEPARTOUT_HEADING_PUBLISH_DOWN_DESC</option>
 			<option value="a.id ASC">JGRID_HEADING_ID_ASC</option>
 			<option value="a.id DESC">JGRID_HEADING_ID_DESC</option>
+			<option value="a.downloads ASC">COM_PASSEPARTOUT_HEADING_DOWNLOADS_ASC</option>
+			<option value="a.downloads DESC">COM_PASSEPARTOUT_HEADING_DOWNLOADS_DESC</option>
 		</field>
 
 		<field
