@@ -45,29 +45,28 @@ class RawView extends BaseHtmlView
     /**
      * Display the view
      *
-     * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
+     * @param string $tpl The name of the template file to parse; automatically searches through the template paths.
      *
      * @return  void
      *
+     * @throws  \Exception
      * @since   1.5
      *
-     * @throws  \Exception
      */
 
     /**
      * Display the view
      *
-     * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
+     * @param string $tpl The name of the template file to parse; automatically searches through the template paths.
      *
      * @return  void
      *
+     * @throws  \Exception
      * @since   1.6
      *
-     * @throws  \Exception
      */
     public function display($tpl = null): void
     {
-        /** @var DocumentModel $model */
         $this->form = $this->get('Form');
         $this->state = $this->get('State');
         $this->item = $this->get('Item');
@@ -79,32 +78,36 @@ class RawView extends BaseHtmlView
 
         $file_data_decoded = json_decode($this->item->file);
 
+        // TODO: Localize error message
         if (!$file_data_decoded)
-            throw new GenericDataException("Invalid file data json: {$file_data_decoded}", 500); // TODO: Localize error message
+            throw new GenericDataException("Invalid file data json: {$file_data_decoded}", 500);
 
         /** @var CMSApplication $app */
         $app = Factory::getApplication();
 
-        $filePath = JPATH_COMPONENT_ADMINISTRATOR . "/uploads/" . $this->item->id . "-" . $file_data_decoded->name;
+        $filePath = JPATH_ADMINISTRATOR . "/components/com_passepartout/uploads/{$this->item->id}-{$file_data_decoded->name}";
 
         if (!file_exists($filePath)) {
-
-            $app->enqueueMessage('ss', 'error');
-            return;
-            // TODO: raise a 404 error
-            http_response_code(404);
-
+            // TODO: raise a real 404 error
+            $app->enqueueMessage("Error 404", "error");
             return;
         }
 
-        $this->getDocument()->setMimeEncoding('application/octet-stream');
-
+        $this->getDocument()->setMimeEncoding("application/octet-stream");
 
         $app->setHeader(
-            'Content-disposition',
-            'attachment; filename="' . $file_data_decoded->name . '"; creation-date="' . Factory::getDate()->toRFC822() . '"',
+            "Content-Transfer-Encoding",
+            "Binary",
             true
         );
+
+        // FIXME Content-disposition header being ignored by browsers
+        $app->setHeader(
+            "Content-disposition",
+            "attachment; filename=\"{$file_data_decoded->name}\"",
+            true
+        );
+
         echo file_get_contents($filePath);
 
         exit;

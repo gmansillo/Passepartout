@@ -73,41 +73,41 @@ class DocumentsHelper extends ContentHelper
         }
 
         foreach ($rows as $row) {
-            $purchaseType = $row->purchase_type;
-
-            if ($purchaseType < 0 && $row->cid) {
-                /** @var \GiovanniMansillo\Component\Passepartout\Administrator\Table\ClientTable $client */
-                $client = Table::getInstance('ClientTable', '\\GiovanniMansillo\\Component\\Passepartout\\Administrator\\Table\\');
-                $client->load($row->cid);
-                $purchaseType = $client->purchase_type;
-            }
-
-            if ($purchaseType < 0) {
-                $params = ComponentHelper::getParams('com_passepartout');
-                $purchaseType = $params->get('purchase_type');
-            }
-
-            switch ($purchaseType) {
-                case 1:
-                    $reset = null;
-                    break;
-                case 2:
-                    $date = Factory::getDate('+1 year ' . date('Y-m-d'));
-                    $reset = $date->toSql();
-                    break;
-                case 3:
-                    $date = Factory::getDate('+1 month ' . date('Y-m-d'));
-                    $reset = $date->toSql();
-                    break;
-                case 4:
-                    $date = Factory::getDate('+7 day ' . date('Y-m-d'));
-                    $reset = $date->toSql();
-                    break;
-                case 5:
-                    $date = Factory::getDate('+1 day ' . date('Y-m-d'));
-                    $reset = $date->toSql();
-                    break;
-            }
+//            $purchaseType = $row->purchase_type;
+//
+//            if ($purchaseType < 0 && $row->cid) {
+//                /** @var \GiovanniMansillo\Component\Passepartout\Administrator\Table\ClientTable $client */
+//                $client = Table::getInstance('ClientTable', '\\GiovanniMansillo\\Component\\Passepartout\\Administrator\\Table\\');
+//                $client->load($row->cid);
+//                $purchaseType = $client->purchase_type;
+//            }
+//
+//            if ($purchaseType < 0) {
+//                $params = ComponentHelper::getParams('com_passepartout');
+//                $purchaseType = $params->get('purchase_type');
+//            }
+//
+//            switch ($purchaseType) {
+//                case 1:
+//                    $reset = null;
+//                    break;
+//                case 2:
+//                    $date = Factory::getDate('+1 year ' . date('Y-m-d'));
+//                    $reset = $date->toSql();
+//                    break;
+//                case 3:
+//                    $date = Factory::getDate('+1 month ' . date('Y-m-d'));
+//                    $reset = $date->toSql();
+//                    break;
+//                case 4:
+//                    $date = Factory::getDate('+7 day ' . date('Y-m-d'));
+//                    $reset = $date->toSql();
+//                    break;
+//                case 5:
+//                    $date = Factory::getDate('+1 day ' . date('Y-m-d'));
+//                    $reset = $date->toSql();
+//                    break;
+//            }
 
             // Update the row ordering field.
             $query = $db->getQuery(true)

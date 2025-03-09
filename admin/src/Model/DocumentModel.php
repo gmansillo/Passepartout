@@ -417,6 +417,8 @@ class DocumentModel extends AdminModel
         //@TODO: fix same alias error
         //@TODO: fix file data loss when in case of alias error (or other validation errors)
         //@TODO: Table::getInstance is deprecated. Replace it as soon as possible
+        // TODO check if at last one user is selected when access is restricted to selected users
+        // TODO check if at least one user group is selected when access is restricted to selected user groups
 
         $app = Factory::getApplication();
         $input = $app->getInput();
@@ -498,7 +500,7 @@ class DocumentModel extends AdminModel
                 return false;
             }
 
-            $blacklistedExtensionsParam = $params->get('blacklisted_extensions', '');
+            $blacklistedExtensionsParam = $params->get('blacklisted_extensions', ''); // FIXME: Extension filter not working
             $blacklistedExtensionsList = array_map('trim', explode(',', $blacklistedExtensionsParam));
 
             $extension = File::getExt($file['name']);

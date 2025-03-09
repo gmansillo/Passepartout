@@ -215,39 +215,39 @@ class DocumentTable extends Table implements VersionableTableInterface
         $db = $this->getDbo();
 
         if (empty($this->id)) {
-            $purchaseType = $this->purchase_type;
-
-            if ($purchaseType < 0 && $this->cid) {
-                $client = new ClientTable($db);
-                $client->load($this->cid);
-                $purchaseType = $client->purchase_type;
-            }
-
-            if ($purchaseType < 0) {
-                $purchaseType = ComponentHelper::getParams('com_passepartout')->get('purchase_type');
-            }
-
-            switch ($purchaseType) {
-                case 1:
-                    $this->reset = null;
-                    break;
-                case 2:
-                    $date        = Factory::getDate('+1 year ' . date('Y-m-d'));
-                    $this->reset = $date->toSql();
-                    break;
-                case 3:
-                    $date        = Factory::getDate('+1 month ' . date('Y-m-d'));
-                    $this->reset = $date->toSql();
-                    break;
-                case 4:
-                    $date        = Factory::getDate('+7 day ' . date('Y-m-d'));
-                    $this->reset = $date->toSql();
-                    break;
-                case 5:
-                    $date        = Factory::getDate('+1 day ' . date('Y-m-d'));
-                    $this->reset = $date->toSql();
-                    break;
-            }
+//            $purchaseType = $this->purchase_type;
+//
+//            if ($purchaseType < 0 && $this->cid) {
+//                $client = new ClientTable($db);
+//                $client->load($this->cid);
+//                $purchaseType = $client->purchase_type;
+//            }
+//
+//            if ($purchaseType < 0) {
+//                $purchaseType = ComponentHelper::getParams('com_passepartout')->get('purchase_type');
+//            }
+//
+//            switch ($purchaseType) {
+//                case 1:
+//                    $this->reset = null;
+//                    break;
+//                case 2:
+//                    $date        = Factory::getDate('+1 year ' . date('Y-m-d'));
+//                    $this->reset = $date->toSql();
+//                    break;
+//                case 3:
+//                    $date        = Factory::getDate('+1 month ' . date('Y-m-d'));
+//                    $this->reset = $date->toSql();
+//                    break;
+//                case 4:
+//                    $date        = Factory::getDate('+7 day ' . date('Y-m-d'));
+//                    $this->reset = $date->toSql();
+//                    break;
+//                case 5:
+//                    $date        = Factory::getDate('+1 day ' . date('Y-m-d'));
+//                    $this->reset = $date->toSql();
+//                    break;
+//            }
 
             // Store the row
             parent::store($updateNulls);
